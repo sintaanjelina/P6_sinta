@@ -116,39 +116,23 @@ class Game extends Cell {
                         break;
                     case 'down':
                         ++newY
-                        if (newY >= 0 && newY < this.grid.length) {
-                            if (this.grid[newY][x].blocked == false ) {
-
+                        if (newY >= 0 && newY < this.grid.length && this.grid[newY][x].blocked == false) {
                                 value.push({ y: newY, x })
-                            }
-                            else {
-                                return false;
-                            }
                         }
                         break;
 
                     case 'right':
                         ++newX
-                        if (newX >= 0 && newX < this.grid.length) {
-                            if (this.grid[y][newX].blocked == false ) {
+                        if (newX >= 0 && newX < this.grid.length && this.grid[y][newX].blocked == false) {
                                 value.push({ y, x: newX })
-                            } else {
-                                return false
-                            }
                         }
                         break;
 
                     case 'left':
-                        console.log('b', newX)
                         --newX
-                        console.log('a', newX)
 
-                        if (newX >= 0 && newX < this.grid.length) {
-                            if (grid[y][newX].blocked == false) {
+                        if (newX >= 0 && newX < this.grid.length && grid[y][newX].blocked == false) {
                                 value.push({ y, x: newX })
-                            } else {
-                                return false;
-                            }
                         }
                         break;
                 }
@@ -168,29 +152,6 @@ class Game extends Cell {
                     
                     console.log('value range add', value[i])
                 }
-
-                    // switch (direction) {
-                    //     case 'up':
-                    //         for (let i = 0; i < value.length; i++) {
-                    //             addClassName(value[i], 'range2')
-                    //         }
-                    //         break
-                    //     case 'down':
-                    //         for (let i = 0; i < value.length; i++) {
-                    //             addClassName(value[i], 'range2')
-                    //         }
-                    //         break
-                    //     case 'right':
-                    //         for (let i = 0; i < value.length; i++) {
-                    //             addClassName(value[i], 'range2')
-                    //         }
-                    //         break;
-                    //     case 'left':
-                    //         for (let i = 0; i < value.length; i++) {
-                    //             addClassName(value[i], 'range2')
-                    //         }
-                    //         break;
-                    // }                
             }
         })
     }
@@ -234,9 +195,8 @@ class Game extends Cell {
     getRandomCell() {
         var randIntY = Math.floor(Math.random() * Math.floor(this.height));
         var randIntX = Math.floor(Math.random() * Math.floor(this.width));
-        // if (!(this.grid[randIntY][randIntX].item && this.grid[randIntY][randIntX].item.length)) {
+
         return ({ y: randIntY, x: randIntX })
-        // }return false
     }
 
     createItem(itemObject, amount) {
