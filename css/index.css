@@ -1,0 +1,71 @@
+*{
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  
+}
+
+#map{
+  max-width: 800px;
+  min-width:800px;
+  border:1px solid red;   
+  box-sizing: border-box;
+}
+
+.container{
+ /* background-color: #a65631; */
+ background-color: #2f2712;
+  /* border: 1px solid yellow; */
+}
+
+.col .active {
+  outline: 5px solid black;
+}
+
+.grid {
+  width: 610px;
+  height: 60px;
+  border: 1px solid grey;
+  float:left;
+  border:2px solid black;
+}
+
+.player1{
+  background-image: url("../img/player1.png");
+}
+
+.player2{
+  background-image: url("../img/player2.png");
+
+}
+
+.block {
+  background-image: url("../img/brick.png");
+  /* background-color: #a65631; */
+  background-size: cover;
+  box-shadow: 0 0 30px black;
+  border: 1px solid #000;
+}
+
+.mushroom1 {
+  background-image: url("../img/mushroom1.png"); 
+}
+
+.mushroom2 {
+  background-image: url("../img/mushroom2.png");
+}
+
+.mushroom3 {
+  background-image: url("../img/mushroom3.png");
+}
+
+.mushroom4 {
+  background-image: url("../img/mushroom4.png");
+}
+
+.range2 {
+  border: 1px solid #ffeb00;
+  background-color: #ffeb00;
+  box-shadow: 0 0 10px #000;
+  cursor: pointer;
+}  
