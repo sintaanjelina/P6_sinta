@@ -45,7 +45,7 @@ class Block{
     }
 }
 
-class Cell{
+class Cell {
     constructor() {
         this.blocked = false;
         this.item = [];
@@ -54,13 +54,6 @@ class Cell{
         return this.item.find(element => element.name == name)
     }
 }
-
-
-function distance(x1, y1, x2, y2) {
-    // console.log('distance: ' ,Math.abs(x1 - x2) + Math.abs(y1 - y2))
-    return Math.abs(x1 - x2) + Math.abs(y1 - y2);
-}
-
 
 class Game extends Cell {
     constructor(height, width) {
