@@ -332,12 +332,12 @@ function removeClassName(coordinates, objClass) {
 // var element = $(`#col-${coordinates.y}${coordinates.x}`);
 
 cell.on("click", function () {
-    var classnya = this.className
-    console.log('this', classnya ,classnya=='border')
-    // console.log('this', this.hasClass('range2'))
-    // if (!this.hasClass('range2')) {
-    //     return
-    // }
+    var classnya = $(this).attr("class")
+    console.log('this', classnya ,$(this).hasClass('range2'))
+    
+    if (!$(this).hasClass('range2')) {
+        return
+    }
 
     const { x, y } = game.playerOnTurn.position
     let newX = x
