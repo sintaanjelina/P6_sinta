@@ -162,13 +162,9 @@ class Game extends Cell {
 
     pathGenerator(range) {
         Object.entries(range).forEach(([direction, value]) => {
-            console.log('vl', value.length)
-            console.log('v', value)
             if (value.length >= 0) {
                 for (let i = 0; i < value.length; i++) {
                     addClassName(value[i], 'range2')
-                    
-                    console.log('value range add', value[i])
                 }
             }
         })
@@ -306,9 +302,6 @@ function addClassName(coordinates, objClass) {
         var element = $('#col-'.concat(coordinates.y, coordinates.x));
         if (!element.hasClass(objClass)) {
             element.addClass(objClass);
-            const class1 = element.get(0).className
-            const class2 = element.get(0).id    
-            console.log("okay", class1, class2)
             return true;
         }    
 }
@@ -317,24 +310,11 @@ function removeClassName(coordinates, objClass) {
         var element = $('#col-'.concat(coordinates.y, coordinates.x));
         if (element.hasClass(objClass)) {
             element.removeClass(objClass);
-            const class1 = element.get(0).className
-            const class2 = element.get(0).id
-            console.log("remove okay", class1, class2)
             return true
         }
 };
 
-// var element = $('#col-'+ coordinates.y +''+ coordinates.x);
-// var element = $(`#col-${coordinates.y}${coordinates.x}`);
-
 cell.on("click", function () {
-    var classnya = $(this).attr("class")
-    console.log('this', classnya, $(this).hasClass('range2'))
-    
-    // if (!this.classList.contains('range2')) {
-    //     return
-    // }
-
     if (!$(this).hasClass('range2')) {
         return
     }
@@ -384,5 +364,4 @@ cell.on("click", function () {
         }
     })
 
-    console.table(game.grid)
 })
