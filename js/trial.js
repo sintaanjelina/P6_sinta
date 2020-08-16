@@ -55,8 +55,11 @@ class Cell {
         this.blocked = false;
         this.item = [];
     }
-    findItem(id) {
+    findItemById(id) {
         return this.item.find(element => element.id == id)
+    }
+    findItemByType(type) {
+        return this.item.find(element => element.type == type)        
     }
 }
 
@@ -175,17 +178,19 @@ class Game extends Cell {
         this.grid[y][x].blocked = false
 
         if (this.grid[y][x].item && this.grid[y][x].item.length) {
+            // console.log('remove',this.grid[y][x].item[0].id )
             if (this.grid[y][x].item[0].id == item.id) {
-                this.grid[y][x].item.splice(0, 1)                
+                this.grid[y][x].item.splice(0, 1)      
             }
         }
     }
-    addItem(y, x, item) { 
-        
+
+    addItem(y, x, item) {     
+
         if (!(this.grid[y][x].item && this.grid[y][x].item.length)) {
             item.position.y = y;
             item.position.x = x;
-            
+
             if (item.type === 'weapon') {
                 this.grid[y][x].blocked = false
 
@@ -260,9 +265,9 @@ class Game extends Cell {
     findItems(Objtype) {
         for (let y = 0; y < this.grid.length; y++) {
             for (let x = 0; x < this.grid[y].length; x++) {
-                const item = this.grid[y][x].findItem(Objtype.id)
+                const item = this.grid[y][x].findItemById(Objtype.id)
                 if (item) {
-                    console.log('find', item, item.position.y[0], item.position.x[0])
+                    console.log('find', item, item.position.y, item.position.x)
                     console.log('weapon',y, x)
                 }
             }
@@ -322,14 +327,13 @@ cell.on("click", function () {
     if (!$(this).hasClass('range2')) {
         return
     }
-    const playerOnTurnOrigin = game.playerOnTurn
 
-    console.log('origin',playerOnTurnOrigin)
+    const playerOnTurnOrigin = game.playerOnTurn
     
     const playerCell = $(`#col-${game.playerOnTurn.position.y}${game.playerOnTurn.position.x}`)
-    
-    game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
     playerCell.removeClass(game.playerOnTurn.id)
+
+    game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
 
     const oldPath = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
     
@@ -344,30 +348,51 @@ cell.on("click", function () {
         }
     })
 
-    
     const newPosition = {
         y: parseInt(this.getAttribute('data-pos-y')),
         x: parseInt(this.getAttribute('data-pos-x'))
     }
 
+    const weaponOnPath = game.grid[newPosition.y][newPosition.x].findItemByType('weapon')
+ 
+    if (weaponOnPath) {
+        if (game.playerOnTurn.weapon.id == 'default') {
+            game.removeItem(weaponOnPath.position.y, weaponOnPath.position.x, weaponOnPath)
+ 
+            $(this).removeClass(weaponOnPath.id)
+            game.playerOnTurn.weapon = weaponOnPath
+ 
+            // console.log('weapon update onpath',updateWeaponOnPath)
+            console.log('weapon on path', weaponOnPath)
+            // console.log('weapon game player', game.playerOnTurn.weapon)
+ 
+            removeClassName(newPosition.y, newPosition.x, weaponOnPath)
+            game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
+        }
+        else {
+            let tempWeapon = game.playerOnTurn.weapon
+            tempWeapon.position = newPosition
+
+            game.removeItem(weaponOnPath.position.y, weaponOnPath.position.x, weaponOnPath)
+            $(this).removeClass(weaponOnPath.id)
+
+            game.playerOnTurn.weapon = weaponOnPath
+            game.removeItem(newPosition.y, newPosition.x, weaponOnPath)
+            removeClassName(newPosition.y, newPosition.x, weaponOnPath)
+            game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
+            
+            game.grid[newPosition.y][newPosition.x].item.push(tempWeapon)
+            
+            $(this).addClass(tempWeapon.id)
+
+
+        }
+    }
+
+    
     game.playerOnTurn.position = newPosition
     $(this).addClass(game.playerOnTurn.id)
     
-    console.log('weapon', game.grid[newPosition.y][newPosition.x].item)
-    
-    if (game.grid[newPosition.y][newPosition.x].item.type === 'weapon') {
-        const weaponOnPath = game.grid[newPosition.y][newPosition.x].item
-        console.log('weapon on path', weaponOnPath)
-        if (game.playerOnTurn.weapon.id != weaponOnPath.id) {
-            // var result = Object.keys(obj).slice(0, 2).map(key => ({ [key]: obj[key] }));
-
-            game.playerOnTurn.weapon = weaponOnPath
-
-        }
-     }
-    game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
-    
-
 
     console.log('test', game.playerOnTurn.position.x, game.playerOnTurn.position.y)
 
