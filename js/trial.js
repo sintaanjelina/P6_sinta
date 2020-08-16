@@ -1,7 +1,8 @@
 class Player{
-    constructor(name) {
-        this.id = 'player';
-        this.name = name;
+    constructor(id, name) {
+        this.id = id
+        this.name = name
+        this.type = 'player'
         this.health = 100
         this.rangeLimit=3
         this.position = {
@@ -20,9 +21,10 @@ class Player{
 }
 
 class Weapon{
-    constructor(name,damage) {
-        this.id =  'weapon'
+    constructor(id, name,damage) {
+        this.id = id
         this.name = name
+        this.type = 'weapon'
         this.damage = damage
         this.position = {
             x: '',
@@ -35,6 +37,7 @@ class Block{
     constructor(name) {
         this.id = 'block'
         this.name = name
+        this.type = 'block'
         this.position = {
             x: '',
             y: ''
@@ -51,8 +54,8 @@ class Cell {
         this.blocked = false;
         this.item = [];
     }
-    findItem(name) {
-        return this.item.find(element => element.name == name)
+    findItem(id) {
+        return this.item.find(element => element.id == id)
     }
 }
 
@@ -66,7 +69,7 @@ class Game extends Cell {
 
     startGame(playerObject) {
         // $("div#map > div").removeClass('range2');
-        if (playerObject.name === 'player1') {
+        if (playerObject.id === 'player1') {
             this.playerOnTurn = playerObject
             this.playerWaiting = 'player2'
         } else {
@@ -88,61 +91,73 @@ class Game extends Cell {
 
     pathFinder(position, length) {
         const { x, y } = position
-        this.path = {
+        const path = {
             up: [],
             down: [],
             left: [],
             right: []
         }
  
-        Object.entries(this.path).forEach(([direction, value]) => {
+        Object.entries(path).forEach(([direction, value]) => {
             let newY = y
             let newX = x
+            let blocked = false
             for (let i = 0; i < length; i++) {
-
+                
                 console.log('test',this.grid.length)
                 switch (direction) {
                     case 'up':
                         --newY
-                        //if blocked true then return false to stop iterating over  that direction value array 
-                        if (newY >= 0 && newY < this.grid.length && this.grid[newY][x].blocked == false) {
-                            value.push({ y: newY, x: x })
-                            console.log('up', value)
-                        } else {
-                            return false
+                        if (newY >= 0 && newY < this.grid.length && !blocked) {
+                            const cellBlocked = this.grid[newY][x].blocked
+                            if (!cellBlocked) {
+                                value.push({ y: newY, x: x })
+                            }
+                            else {
+                                blocked = true
+                            }
                         }
                         break;
                     case 'down':
                         ++newY
-                        if (newY >= 0 && newY < this.grid.length && this.grid[newY][x].blocked == false) {
-                                value.push({ y: newY, x })
-                        } else {
-                            return false
+                        if (newY >= 0 && newY < this.grid.length && !blocked) {
+                            const cellBlocked = this.grid[newY][x].blocked
+                            if (!cellBlocked) {
+                                value.push({ y: newY, x }) 
+                            } else {
+                                blocked = true
+                            }
                         }
                         break;
 
                     case 'right':
                         ++newX
-                        if (newX >= 0 && newX < this.grid.length && this.grid[y][newX].blocked == false) {
+                        if (newX >= 0 && newX < this.grid.length && !blocked) {
+                            const cellBlocked = this.grid[y][newX].blocked
+                            if (!cellBlocked) {
                                 value.push({ y, x: newX })
-                        } else {
-                            return false
+                            } else {
+                                blocked = true
+                            }
                         }
                         break;
 
                     case 'left':
                         --newX
-                        if (newX >= 0 && newX < this.grid.length && this.grid[y][newX].blocked == false) {
+                        if (newX >= 0 && newX < this.grid.length && !blocked) {
+                            const cellBlocked = this.grid[y][newX].blocked
+                            if (!cellBlocked) {
                                 value.push({ y, x: newX })
-                        } else {
-                            return false
+                            } else {
+                                blocked= true
+                            }
                         }
                         break;
                 }
             }
         })
-        console.log(this.path)
-        return this.path
+        console.log(path)
+        return path
     }
 
     pathGenerator(range) {
@@ -163,32 +178,24 @@ class Game extends Cell {
         this.grid[y][x].blocked = false
 
         if (this.grid[y][x].item && this.grid[y][x].item.length) {
-            if (this.grid[y][x].item[0].name == item.name) {
+            if (this.grid[y][x].item[0].id == item.id) {
                 this.grid[y][x].item.splice(0, 1)                
             }
         }
     }
     addItem(y, x, item) {
-        if (item.id === 'weapon') {
+        if (item.type === 'weapon') {
             this.grid[y][x].blocked = false
         }
-        else if(item.id === 'block' || item.id === 'player') {
+        if(item.type === 'block' || item.type === 'player') {
             this.grid[y][x].blocked = true
-        } else {
-            
-        }
-
+        } 
         if (!(this.grid[y][x].item && this.grid[y][x].item.length)) {
-            this.grid[y][x].item.push(item)
-
-            item.position.y = y; 
+            item.position.y = y;
             item.position.x = x;
 
-            addClassName({y: y, x: x}, item.name)
-            console.log('addItem grid', this.grid[y][x])
-            console.log('addItem Block', this.grid[y][x].blocked)
-            console.log('addItem', item)
-
+            this.grid[y][x].item.push(item)
+            addClassName({y: y, x: x}, item.id)
             
             return true
         }
@@ -214,7 +221,6 @@ class Game extends Cell {
         if (amount <= numavailableCell) {
             while (amount != 0) {
                 var randIndex = this.getRandomCell()
-                console.log('rand', randIndex)
                 var addItemResult = this.addItem(randIndex.y, randIndex.x, itemObject)
                 if ( addItemResult== true) {
                     amount--
@@ -236,6 +242,11 @@ class Game extends Cell {
             row.classList.add('row')
             for (let x = 0; x < this.grid[y].length; x++) {
                 const column = document.createElement('div')
+
+                //add data attributes to set the y and x value of the cell
+                column.setAttribute('data-pos-y', y)
+                column.setAttribute('data-pos-x', x)
+
                 column.classList.add('col' ,'p-3', 'border')
                 column.id = 'col-' + y + x
                 column.textContent = 'col-' + y + x
@@ -249,9 +260,7 @@ class Game extends Cell {
     findItems(Objtype) {
         for (let y = 0; y < this.grid.length; y++) {
             for (let x = 0; x < this.grid[y].length; x++) {
-                const item = this.grid[y][x].findItem(Objtype.name)
-                // console.log('Not find', item)
-                // console.log('weapon', y, x)
+                const item = this.grid[y][x].findItem(Objtype.id)
                 if (item) {
                     console.log('find', item, item.position.y[0], item.position.x[0])
                     console.log('weapon',y, x)
@@ -263,12 +272,12 @@ class Game extends Cell {
 }
 
 let numberOfBlocks = 20;
-const player1 = new Player('player1')
-const player2 = new Player('player2')
-const weapon1 = new Weapon('mushroom1', 50)
-const weapon2 = new Weapon('mushroom2', 40)
-const weapon3 = new Weapon('mushroom3', 30)
-const weapon4 = new Weapon('mushroom4', 15)
+const player1 = new Player('player1','Mario')
+const player2 = new Player('player2', 'Luigi')
+const weapon1 = new Weapon('mushroom1', 'Mushroom 1' , 50)
+const weapon2 = new Weapon('mushroom2', 'Mushroom 2' , 40)
+const weapon3 = new Weapon('mushroom3', 'Mushroom 3' , 30)
+const weapon4 = new Weapon('mushroom4', 'Mushroom 4' , 15)
 const game = new Game(10, 10)
 
 game.generateGrid()
@@ -284,7 +293,6 @@ game.createItem(weapon4, 1)
 
 while (numberOfBlocks != 0) {
     var randIndex = game.getRandomCell()
-    console.log('rand', randIndex)
     var block = new Block('block')
     if (game.addItem(randIndex.y, randIndex.x, block) == true) {
         numberOfBlocks--
@@ -295,26 +303,14 @@ game.startGame(player1)
 var cell = $("div#map > div>div")
 
 function addClassName(coordinates, objClass) {
-        
         var element = $('#col-'.concat(coordinates.y, coordinates.x));
         if (!element.hasClass(objClass)) {
             element.addClass(objClass);
-            console.log(element)
             const class1 = element.get(0).className
             const class2 = element.get(0).id    
             console.log("okay", class1, class2)
             return true;
-        }
-        // else if (element.hasClass(objClass)) {
-            // element.addClass(objClass)
-        //     // element.removeClass(objClass)
-        //     const class1 = element.get(0).className
-        //     const class2 = element.get(0).id
-        //     console.log("not okay", class1, class2)
-        // } else {
-        //     console.log('why not okay?')
-        // }
-    
+        }    
 }
 
 function removeClassName(coordinates, objClass) {
@@ -333,114 +329,60 @@ function removeClassName(coordinates, objClass) {
 
 cell.on("click", function () {
     var classnya = $(this).attr("class")
-    console.log('this', classnya ,$(this).hasClass('range2'))
+    console.log('this', classnya, $(this).hasClass('range2'))
     
+    // if (!this.classList.contains('range2')) {
+    //     return
+    // }
+
     if (!$(this).hasClass('range2')) {
         return
     }
+    const playerOnTurnOrigin = game.playerOnTurn
 
-    const { x, y } = game.playerOnTurn.position
-    let newX = x
-    let newY = y
+    console.log('origin',playerOnTurnOrigin)
     
-    const path = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
-    console.log("path before", path)
+    const playerCell = $(`#col-${game.playerOnTurn.position.y}${game.playerOnTurn.position.x}`)
     
-    Object.entries(path).forEach(([direction, value]) => {
-        if (value.length >= 0) {
-            for (let i = 0; i < value.length; i++) {                  
-                let possibleStepCol = 'col-'.concat(value[i].y, value[i].x)
-                const cellElement = $(`#${possibleStepCol}`);
+    game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
+    playerCell.removeClass(game.playerOnTurn.id)
 
-                cellElement.classList.remove('range2')
-   
-                game.removeItem(newY, newX, game.playerOnTurn)
-                const prevCellElement = $(`#col-${newY}${newX}`)
+    const oldPath = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
+    
 
-                prevCellElement.classList.remove(game.playerOnTurn.name)
-
-                let addItemResult = game.addItem(value[i].y, value[i].x, game.playerOnTurn)
-                if (addItemResult == true) {
-                    // addClassName(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn.name)
-                    console.log('add',addItemResult)
-
-                    var pathUpdate = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
-
-                    console.log('path after value[i] ', pathUpdate)
-                    game.pathGenerator(pathUpdate)
-
-                
-                }
-
-                Object.entries(pathUpdate).forEach(([updateDirection, updateValue]) => {
-                    for (let j = 0; j < updateValue.length; j++) {
-                        console.log('updateValue ', updateValue[j])
-                        console.log('value', value[i])
-                        console.log('value compare', updateValue[j].x == value[i].x && updateValue[j].y == value[i].y)
-
-                        if (updateValue[j].x == value[i].x && updateValue[j].y == value[i].y) {
-                            addClassName(value[j], 'range2')
-                            console.log('value add class range2', value[j].y, value[j].x)
-                        }
-                        // else {
-                        //     removeClassName(value[i], 'range2')
-                        //     console.log('value remove class range2', value[j].y, value[j].x)
-                        // }
-                    }
-                })
-
-  
-            }
+    Object.values(oldPath).forEach((positions) => {
+        for (let i = 0; i < positions.length; i++) {
+            const { y, x } = positions[i]
+            const cellId = `#col-${y}${x}`
+            const cellElement = $(cellId)
+            
+            cellElement.removeClass('range2')
+            cellElement.removeClass(game.playerOnTurn.id)
         }
     })
+
+    
+    const newPosition = {
+        y: parseInt(this.getAttribute('data-pos-y')),
+        x: parseInt(this.getAttribute('data-pos-x'))
+    }
+
+    game.playerOnTurn.position = newPosition
+    $(this).addClass(game.playerOnTurn.id)
+    game.addItem(newPosition.y, newPosition.x,playerOnTurnOrigin)
+
+    const newPath = game.pathFinder(newPosition, game.playerOnTurn.rangeLimit)
+
+    Object.values(newPath).forEach((positions) => {
+        for (let i = 0; i < positions.length; i++) {
+            const { y, x } = positions[i]
+            const cellId = `#col-${y}${x}`
+            const cellElement = $(cellId)
+
+            cellElement.addClass('range2')
+
+        }
+    })
+
+    console.table(game.grid)
 })
-
-
-             
- 
-
-
-//                 // // switch (direction) {
-//                 // //     case 'up':
-//                 // //         let possibleStepCol = 'col-'.concat(value[i].y, value[i].x)
-
-//                 // //         if (this.id == possibleStepCol) {
-//                 // //             if (game.addItem(value[i].y, value[i].x, game.playerOnTurn) === true) {
-//                 // //                 // addClassName(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn.name)
-                                
-//                 // //                 const pathUpdate = pathFinder(this.grid, game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
-//                 // //                 pathGenerator(pathUpdate)
-//                 // //             }
-//                 // //         }
-//                 // //         break
-//                 // //     case 'down':
-//                 // //         // removeClassName(value[i], 'range2')
-//                 // //         break
-//                 // //     case 'right':
-//                 // //         // removeClassName(value[i], 'range2')
-//                 // //         break;
-//                 // //     case 'left':
-//                 // //         // removeClassName(value[i], 'range2')
-//                 // //         break;
-//                 // }
-
-
-// //     for (var i = 0; i < game.possibleRangeMovements.length; i++) {
-// //         possibleStepCol = 'col-'.concat(game.possibleRangeMovements[i][0], game.possibleRangeMovements[i][1])
-// //         // console.log(possibleStepCol, this.id)
-// //         if (this.id == possibleStepCol) {
-
-            
-// //             removeClassName([game.playerOnTurn.position.y[0], game.playerOnTurn.position.x[0]], game.playerOnTurn.name)
-
-// //             let showDisplay = game.addItem(game.possibleRangeMovements[i][0], game.possibleRangeMovements[i][1], game.playerOnTurn)
-// //             console.log(showDisplay)
-// //             if (showDisplay !== false) {
-// //                 addClassName([game.playerOnTurn.position.y[0], game.playerOnTurn.position.x[0]], game.playerOnTurn.name)  
-// //                 game.rangemovements(game.playerOnTurn)
-// //             }
-        
-// //         }
-
-// //     }
-// // })
