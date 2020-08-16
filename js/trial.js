@@ -10,8 +10,9 @@ class Player{
             y: ''
         };
         this.weapon = {
-            id: 'weapon',
+            id: 'default',
             name: 'hand',
+            type: 'weapon',
             damage: 10,
             position: this.position
         }
@@ -179,16 +180,19 @@ class Game extends Cell {
             }
         }
     }
-    addItem(y, x, item) {
-        if (item.type === 'weapon') {
-            this.grid[y][x].blocked = false
-        }
-        if(item.type === 'block' || item.type === 'player') {
-            this.grid[y][x].blocked = true
-        } 
+    addItem(y, x, item) { 
+        
         if (!(this.grid[y][x].item && this.grid[y][x].item.length)) {
             item.position.y = y;
             item.position.x = x;
+            
+            if (item.type === 'weapon') {
+                this.grid[y][x].blocked = false
+
+            }
+            if (item.type === 'block' || item.type === 'player') {
+                    this.grid[y][x].blocked = true
+            } 
 
             this.grid[y][x].item.push(item)
             addClassName({y: y, x: x}, item.id)
@@ -335,7 +339,6 @@ cell.on("click", function () {
             const { y, x } = positions[i]
             const cellId = `#col-${y}${x}`
             const cellElement = $(cellId)
-            
             cellElement.removeClass('range2')
             cellElement.removeClass(game.playerOnTurn.id)
         }
@@ -349,7 +352,24 @@ cell.on("click", function () {
 
     game.playerOnTurn.position = newPosition
     $(this).addClass(game.playerOnTurn.id)
-    game.addItem(newPosition.y, newPosition.x,playerOnTurnOrigin)
+    
+    console.log('weapon', game.grid[newPosition.y][newPosition.x].item)
+    
+    if (game.grid[newPosition.y][newPosition.x].item.type === 'weapon') {
+        const weaponOnPath = game.grid[newPosition.y][newPosition.x].item
+        console.log('weapon on path', weaponOnPath)
+        if (game.playerOnTurn.weapon.id != weaponOnPath.id) {
+            // var result = Object.keys(obj).slice(0, 2).map(key => ({ [key]: obj[key] }));
+
+            game.playerOnTurn.weapon = weaponOnPath
+
+        }
+     }
+    game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
+    
+
+
+    console.log('test', game.playerOnTurn.position.x, game.playerOnTurn.position.y)
 
     const newPath = game.pathFinder(newPosition, game.playerOnTurn.rangeLimit)
 
@@ -358,10 +378,11 @@ cell.on("click", function () {
             const { y, x } = positions[i]
             const cellId = `#col-${y}${x}`
             const cellElement = $(cellId)
-
             cellElement.addClass('range2')
-
         }
     })
+
+
+
 
 })
