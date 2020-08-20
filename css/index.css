@@ -32,11 +32,18 @@
 
 .player1{
   background-image: url("../img/player1.png");
+  /* background: url("../img/player1.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain; */
 }
 
 .player2{
   background-image: url("../img/player2.png");
-
+  /* background: url("../img/player2.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain; */
 }
 
 .block {
@@ -49,18 +56,34 @@
 
 .mushroom1 {
   background-image: url("../img/mushroom1.png"); 
+  /* background: url("../img/mushroom1.png"); 
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain; */
 }
 
 .mushroom2 {
   background-image: url("../img/mushroom2.png");
+  /* background: url("../img/mushroom2.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain; */
 }
 
 .mushroom3 {
   background-image: url("../img/mushroom3.png");
+  /* background: url("../img/mushroom3.png");  
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain; */
 }
 
 .mushroom4 {
   background-image: url("../img/mushroom4.png");
+  /* background: url("../img/mushroom4.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain; */
 }
 
 .range2 {
