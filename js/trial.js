@@ -16,13 +16,22 @@ class Player{
             damage: 10,
             position: this.position
         }
-     
+        this.previousWeapon = {
+            // id: '',
+            // name: '',
+            // type: '',
+            // damage: 0,
+            // position: ''
+        }
     }
 
+    changeWeapon(newWeaponLocation, clicklocation, destination ) {
+        
+    }
 }
 
 class Weapon{
-    constructor(id, name,damage) {
+    constructor(id, name, damage) {
         this.id = id
         this.name = name
         this.type = 'weapon'
@@ -164,15 +173,32 @@ class Game extends Cell {
         return path
     }
 
-    pathGenerator(range) {
-        Object.entries(range).forEach(([direction, value]) => {
-            if (value.length >= 0) {
-                for (let i = 0; i < value.length; i++) {
-                    addClassName(value[i], 'range2')
-                }
+    pathGenerator(newPath) {
+        Object.values(newPath).forEach((positions) => {
+            for (let i = 0; i < positions.length; i++) {
+                // const { y, x } = positions[i]
+                addClassName(positions[i], 'range2')
             }
         })
     }
+    pathGenerator(newPath) {
+        Object.values(newPath).forEach((positions) => {
+            for (let i = 0; i < positions.length; i++) {
+                // const { y, x } = positions[i]
+                addClassName(positions[i], 'range2')
+            }
+        })
+    }
+    
+    pathRemover(oldPath) {
+        Object.values(oldPath).forEach((positions) => {
+            for (let i = 0; i < positions.length; i++) {
+                // const { y, x } = positions[i]
+                removeClassName(positions[i], 'range2')
+            }
+        })
+    }
+
 
     removeItem(y, x, item) {
         this.grid[y][x].blocked = false
@@ -180,7 +206,9 @@ class Game extends Cell {
         if (this.grid[y][x].item && this.grid[y][x].item.length) {
             // console.log('remove',this.grid[y][x].item[0].id )
             if (this.grid[y][x].item[0].id == item.id) {
-                this.grid[y][x].item.splice(0, 1)      
+                this.grid[y][x].item.splice(0, 1)  
+                removeClassName({ y: y, x: x }, item.id)
+                // return true
             }
         }
     }
@@ -189,7 +217,7 @@ class Game extends Cell {
 
         if (!(this.grid[y][x].item && this.grid[y][x].item.length)) {
             item.position.y = y;
-            item.position.x = x;
+            item.position.x = x;    
 
             if (item.type === 'weapon') {
                 this.grid[y][x].blocked = false
@@ -279,6 +307,7 @@ class Game extends Cell {
 let numberOfBlocks = 20;
 const player1 = new Player('player1','Mario')
 const player2 = new Player('player2', 'Luigi')
+const defaultWeapon = new Weapon('default', 'hand', '10')
 const weapon1 = new Weapon('mushroom1', 'Mushroom 1' , 50)
 const weapon2 = new Weapon('mushroom2', 'Mushroom 2' , 40)
 const weapon3 = new Weapon('mushroom3', 'Mushroom 3' , 30)
@@ -308,106 +337,102 @@ game.startGame(player1)
 var cell = $("div#map > div>div")
 
 function addClassName(coordinates, objClass) {
-        var element = $('#col-'.concat(coordinates.y, coordinates.x));
-        if (!element.hasClass(objClass)) {
-            element.addClass(objClass);
-            return true;
-        }    
+    const { y, x } = coordinates
+    const cellId = `#col-${y}${x}`
+    const cellElement = $(cellId)
+    if (!cellElement.hasClass(objClass)) {
+        cellElement.addClass(objClass);        
+        return true;
+    }
 }
 
 function removeClassName(coordinates, objClass) {
-        var element = $('#col-'.concat(coordinates.y, coordinates.x));
-        if (element.hasClass(objClass)) {
-            element.removeClass(objClass);
-            return true
-        }
+    const { y, x } = coordinates
+    const cellId = `#col-${y}${x}`
+    const cellElement = $(cellId)
+    if (cellElement.hasClass(objClass)) {
+        cellElement.removeClass(objClass);
+        return true;
+    }
 };
 
 cell.on("click", function () {
     if (!$(this).hasClass('range2')) {
         return
     }
-
-    const playerOnTurnOrigin = game.playerOnTurn
     
-    const playerCell = $(`#col-${game.playerOnTurn.position.y}${game.playerOnTurn.position.x}`)
-    playerCell.removeClass(game.playerOnTurn.id)
+    const oldPath = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)   
 
-    game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
-
-    const oldPath = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
-    
-
-    Object.values(oldPath).forEach((positions) => {
-        for (let i = 0; i < positions.length; i++) {
-            const { y, x } = positions[i]
-            const cellId = `#col-${y}${x}`
-            const cellElement = $(cellId)
-            cellElement.removeClass('range2')
-            cellElement.removeClass(game.playerOnTurn.id)
-        }
-    })
+    game.pathRemover(oldPath)
 
     const newPosition = {
         y: parseInt(this.getAttribute('data-pos-y')),
         x: parseInt(this.getAttribute('data-pos-x'))
     }
 
+    game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn )
+
+
+    const playerOnTurnOrigin = game.playerOnTurn
+
     const weaponOnPath = game.grid[newPosition.y][newPosition.x].findItemByType('weapon')
- 
+    if (game.playerOnTurn.previousWeapon.id !== undefined) {
+        game.grid[game.playerOnTurn.position.y][game.playerOnTurn.position.x] = new Cell()
+        game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
+        game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn.previousWeapon)
+        game.playerOnTurn.previousWeapon = {}
+    }
     if (weaponOnPath) {
         if (game.playerOnTurn.weapon.id == 'default') {
             game.removeItem(weaponOnPath.position.y, weaponOnPath.position.x, weaponOnPath)
- 
+
             $(this).removeClass(weaponOnPath.id)
             game.playerOnTurn.weapon = weaponOnPath
- 
+
             // console.log('weapon update onpath',updateWeaponOnPath)
             console.log('weapon on path', weaponOnPath)
             // console.log('weapon game player', game.playerOnTurn.weapon)
- 
+
             removeClassName(newPosition.y, newPosition.x, weaponOnPath)
             game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
         }
         else {
             let tempWeapon = game.playerOnTurn.weapon
+            game.playerOnTurn.previousWeapon = tempWeapon
             tempWeapon.position = newPosition
-
-            game.removeItem(weaponOnPath.position.y, weaponOnPath.position.x, weaponOnPath)
-            $(this).removeClass(weaponOnPath.id)
+            // game.removeItem(weaponOnPath.position.y, weaponOnPath.position.x, weaponOnPath)
 
             game.playerOnTurn.weapon = weaponOnPath
+            
+            //if(weaponOnPath.position.x == )
             game.removeItem(newPosition.y, newPosition.x, weaponOnPath)
-            removeClassName(newPosition.y, newPosition.x, weaponOnPath)
-            game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
-            
-            game.grid[newPosition.y][newPosition.x].item.push(tempWeapon)
-            
-            $(this).addClass(tempWeapon.id)
 
+
+            game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
+
+            game.grid[newPosition.y][newPosition.x].item.push(tempWeapon)
+            // $(this).addClass(tempWeapon.id)
 
         }
     }
 
-    
+
     game.playerOnTurn.position = newPosition
-    $(this).addClass(game.playerOnTurn.id)
+
+    game.playerOnTurn.weapon.position = game.playerOnTurn.position
+    game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
+
+  
+    
     
 
     console.log('test', game.playerOnTurn.position.x, game.playerOnTurn.position.y)
 
     const newPath = game.pathFinder(newPosition, game.playerOnTurn.rangeLimit)
 
-    Object.values(newPath).forEach((positions) => {
-        for (let i = 0; i < positions.length; i++) {
-            const { y, x } = positions[i]
-            const cellId = `#col-${y}${x}`
-            const cellElement = $(cellId)
-            cellElement.addClass('range2')
-        }
-    })
+    game.pathGenerator(newPath)
 
 
-
+console.table(game.grid)
 
 })
