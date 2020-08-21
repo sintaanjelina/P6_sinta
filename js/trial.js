@@ -24,10 +24,6 @@ class Player{
             // position: ''
         }
     }
-
-    changeWeapon(newWeaponLocation, clicklocation, destination ) {
-        
-    }
 }
 
 class Weapon{
@@ -173,6 +169,7 @@ class Game extends Cell {
         return path
     }
 
+
     pathGenerator(newPath) {
         Object.values(newPath).forEach((positions) => {
             for (let i = 0; i < positions.length; i++) {
@@ -181,11 +178,83 @@ class Game extends Cell {
             }
         })
     }
-    pathGenerator(newPath) {
+
+    opponentFinder(playerPosition, fightingRange = 1) {
+        const { x, y } = playerPosition
+        const opponent = {
+            up: [],
+            down: [],
+            left: [],
+            right: []
+        }
+
+        for (var direction of Object.keys(opponent)) {
+            let newY = y
+            let newX = x
+
+            switch (direction) {
+                case 'up':
+                    --newY
+                    if (newY >= 0 && newY < this.grid.length) {
+                        if ((this.grid[newY][x].item && this.grid[newY][x].item.length)) {
+                            const cellOpponent = this.grid[newY][x].findItemByType('player')
+
+                            if (cellOpponent) {
+                                return cellOpponent
+                            }
+                        }
+                    }
+                    break;
+                case 'down':
+                    ++newY
+                    if (newY >= 0 && newY < this.grid.length) {
+                        if ((this.grid[newY][x].item && this.grid[newY][x].item.length)) {
+                            const cellOpponent = this.grid[newY][x].findItemByType('player')
+                            if (cellOpponent) {
+                                return cellOpponent
+                            }
+                        }
+                    }
+                    break;
+                case 'right':
+                    ++newX
+                    if (newX >= 0 && newX < this.grid.length) {
+                        if ((this.grid[y][newX].item && this.grid[y][newX].item.length)) {
+                            const cellOpponent = this.grid[y][newX].findItemByType('player')
+                            if (cellOpponent) {
+                                return cellOpponent
+                            }
+                        }
+                    }
+                    break;
+
+                case 'left':
+                    --newX
+                    if (newX >= 0 && newX < this.grid.length) {
+                        if ((this.grid[y][newX].item && this.grid[y][newX].item.length)) {
+                            const cellOpponent = this.grid[y][newX].findItemByType('player')
+                            if (cellOpponent) {
+                                return cellOpponent
+                            }
+                        }
+                    }
+                    break;
+            }
+
+        }
+            
+        console.log(opponent)
+        return false
+    }
+
+    battleDecision(opponentInFightingRange, clickTarget) {
+        alert('click on opponent place if you want to attack or defend')
+        const {x,y} = opponentInFightingRange.position
         Object.values(newPath).forEach((positions) => {
             for (let i = 0; i < positions.length; i++) {
-                // const { y, x } = positions[i]
-                addClassName(positions[i], 'range2')
+                if (clickTarget.x == x && clickTarget.y == y) {
+                    
+                }   
             }
         })
     }
@@ -254,13 +323,22 @@ class Game extends Cell {
         if (amount <= numavailableCell) {
             while (amount != 0) {
                 var randIndex = this.getRandomCell()
-                var addItemResult = this.addItem(randIndex.y, randIndex.x, itemObject)
-                if ( addItemResult== true) {
-                    amount--
+                if (itemObject.type = 'player') {
+                    var adjacentOpponent = this.opponentFinder(randIndex, 1)
+                    if (!adjacentOpponent) {
+                        var addItemResult = this.addItem(randIndex.y, randIndex.x, itemObject)
+                        if (addItemResult == true) {
+                            amount--
+                        }
+                    }
                 }
                 else {
-                    console.log('addItem',false)
+                    var addItemResult = this.addItem(randIndex.y, randIndex.x, itemObject)
+                    if (addItemResult == true) {
+                        amount--
+                    }
                 }
+
             }
         } else if (amount > numavailableCell) {
             // alert("All " + amount + " "+Objtype.name + " cannot be generated - no space left ")
@@ -370,18 +448,27 @@ cell.on("click", function () {
         x: parseInt(this.getAttribute('data-pos-x'))
     }
 
+    const opponentInFightingRange = game.opponentFinder(newPosition,2)
+    if (opponentInFightingRange) {
+        
+        
+    }
+
+
     game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn )
 
 
     const playerOnTurnOrigin = game.playerOnTurn
 
     const weaponOnPath = game.grid[newPosition.y][newPosition.x].findItemByType('weapon')
+
     if (game.playerOnTurn.previousWeapon.id !== undefined) {
         game.grid[game.playerOnTurn.position.y][game.playerOnTurn.position.x] = new Cell()
         game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
         game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn.previousWeapon)
         game.playerOnTurn.previousWeapon = {}
     }
+    console.log('test',weaponOnPath)
     if (weaponOnPath) {
         if (game.playerOnTurn.weapon.id == 'default') {
             game.removeItem(weaponOnPath.position.y, weaponOnPath.position.x, weaponOnPath)
@@ -389,10 +476,7 @@ cell.on("click", function () {
             $(this).removeClass(weaponOnPath.id)
             game.playerOnTurn.weapon = weaponOnPath
 
-            // console.log('weapon update onpath',updateWeaponOnPath)
             console.log('weapon on path', weaponOnPath)
-            // console.log('weapon game player', game.playerOnTurn.weapon)
-
             removeClassName(newPosition.y, newPosition.x, weaponOnPath)
             game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
         }
@@ -400,37 +484,36 @@ cell.on("click", function () {
             let tempWeapon = game.playerOnTurn.weapon
             game.playerOnTurn.previousWeapon = tempWeapon
             tempWeapon.position = newPosition
-            // game.removeItem(weaponOnPath.position.y, weaponOnPath.position.x, weaponOnPath)
 
             game.playerOnTurn.weapon = weaponOnPath
             
-            //if(weaponOnPath.position.x == )
             game.removeItem(newPosition.y, newPosition.x, weaponOnPath)
-
 
             game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
 
             game.grid[newPosition.y][newPosition.x].item.push(tempWeapon)
-            // $(this).addClass(tempWeapon.id)
 
         }
     }
-
 
     game.playerOnTurn.position = newPosition
 
     game.playerOnTurn.weapon.position = game.playerOnTurn.position
     game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
 
-  
-    
-    
-
     console.log('test', game.playerOnTurn.position.x, game.playerOnTurn.position.y)
 
-    const newPath = game.pathFinder(newPosition, game.playerOnTurn.rangeLimit)
+    
+    if (game.playerWaiting == 'player2') {
+        game.startGame(player2)
+    }
+    else {
+        game.startGame(player1)
+    }
+    
+    // const newPath = game.pathFinder(newPosition, game.playerOnTurn.rangeLimit)
 
-    game.pathGenerator(newPath)
+    // game.pathGenerator(newPath)
 
 
 console.table(game.grid)
