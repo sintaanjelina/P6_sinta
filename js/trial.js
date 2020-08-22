@@ -323,7 +323,7 @@ class Game extends Cell {
         if (amount <= numavailableCell) {
             while (amount != 0) {
                 var randIndex = this.getRandomCell()
-                if (itemObject.type = 'player') {
+                if (itemObject.type == 'player') {
                     var adjacentOpponent = this.opponentFinder(randIndex, 1)
                     if (!adjacentOpponent) {
                         var addItemResult = this.addItem(randIndex.y, randIndex.x, itemObject)
@@ -448,10 +448,10 @@ cell.on("click", function () {
         x: parseInt(this.getAttribute('data-pos-x'))
     }
 
-    const opponentInFightingRange = game.opponentFinder(newPosition,2)
+    const opponentInFightingRange = game.opponentFinder(newPosition, 1)
+    console.log('i found something', opponentInFightingRange)
     if (opponentInFightingRange) {
-        
-        
+        alert(game.playerOnTurn+'found'+opponentInFightingRange)
     }
 
 
