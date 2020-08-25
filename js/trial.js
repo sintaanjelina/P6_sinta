@@ -74,6 +74,7 @@ class Game extends Cell {
         this.grid = []
         this.height = height
         this.width = width
+        this.turn = 0;
     }
 
     startGame(playerObject) {
@@ -81,10 +82,16 @@ class Game extends Cell {
         if (playerObject.id === 'player1') {
             this.playerOnTurn = playerObject
             this.playerWaiting = 'player2'
+
         } else {
             this.playerOnTurn = playerObject
             this.playerWaiting = 'player1'
         }
+
+        $(`#${this.playerOnTurn.id}InfoCard`).addClass('text-white bg-dark')
+        $(`#activePlayerName`).text(`${this.playerOnTurn.name}`)
+        $(`#${this.playerWaiting}InfoCard`).removeClass('text-white bg-dark')
+
         const path = this.pathFinder(playerObject.position, playerObject.rangeLimit)
         this.pathGenerator(path)
     }
@@ -191,15 +198,14 @@ class Game extends Cell {
         for (var direction of Object.keys(opponent)) {
             let newY = y
             let newX = x
-
             switch (direction) {
                 case 'up':
                     --newY
                     if (newY >= 0 && newY < this.grid.length) {
                         if ((this.grid[newY][x].item && this.grid[newY][x].item.length)) {
                             const cellOpponent = this.grid[newY][x].findItemByType('player')
-
                             if (cellOpponent) {
+                                console.log('opponent up', opponent)
                                 return cellOpponent
                             }
                         }
@@ -211,6 +217,7 @@ class Game extends Cell {
                         if ((this.grid[newY][x].item && this.grid[newY][x].item.length)) {
                             const cellOpponent = this.grid[newY][x].findItemByType('player')
                             if (cellOpponent) {
+                                console.log('opponent down', opponent)
                                 return cellOpponent
                             }
                         }
@@ -222,6 +229,7 @@ class Game extends Cell {
                         if ((this.grid[y][newX].item && this.grid[y][newX].item.length)) {
                             const cellOpponent = this.grid[y][newX].findItemByType('player')
                             if (cellOpponent) {
+                                console.log('opponent right', opponent)
                                 return cellOpponent
                             }
                         }
@@ -234,6 +242,7 @@ class Game extends Cell {
                         if ((this.grid[y][newX].item && this.grid[y][newX].item.length)) {
                             const cellOpponent = this.grid[y][newX].findItemByType('player')
                             if (cellOpponent) {
+                                console.log('opponent left', opponent)
                                 return cellOpponent
                             }
                         }
@@ -243,7 +252,6 @@ class Game extends Cell {
 
         }
             
-        console.log(opponent)
         return false
     }
 
@@ -347,7 +355,7 @@ class Game extends Cell {
     }
     createMaps() {
         const maps = document.getElementById('map')
-        maps.classList.add('container', 'd-flex','flex-column')
+        maps.classList.add('container', 'd-flex','flex-column', 'justify-content-left')
         for (let y = 0; y < this.grid.length; y++) {
             const row = document.createElement('div')
             row.classList.add('row')
@@ -377,6 +385,39 @@ class Game extends Cell {
                     console.log('weapon',y, x)
                 }
             }
+        }
+    }
+
+    attack() {
+        const playerInBattleMode = this.playerOnTurn
+        const opponentInBattleMode = this.opponentFinder(this.playerOnTurn.position)
+        let damageReceived = playerInBattleMode.weapon.damage
+        if (opponentInBattleMode.defend == true) {
+            damageReceived = damageReceived / 2
+        }
+        console.log('attack game player', this.playerOnTurn)
+        console.log('attack ',  playerInBattleMode, 'kek op',opponentInBattleMode)
+        opponentInBattleMode.health -= damageReceived
+        $(`${opponentInBattleMode.id}Health`).text(opponentInBattleMode.health)
+        $('#battleDecisionModal').modal('hide')
+        // game.startGame(opponentInBattleMode)
+        alert(playerInBattleMode.id + '- waiting' + this.playerWaiting + '- playeronturn' + opponentInBattleMode.id)
+        if (opponentInBattleMode.id == 'player2') {
+            this.startGame(player2)
+        } else {
+            this.startGame(player1)
+        }
+    }
+    defend() {
+        const playerInBattleMode = this.playerOnTurn
+        const opponentInBattleMode = this.opponentFinder(this.playerOnTurn.position)
+        playerInBattleMode.defend == true
+        $('#battleDecisionModal').modal('hide')
+        alert(this.playerWaiting == opponentInBattleMode.id + this.playerWaiting + opponentInBattleMode.id)
+        if (opponentInBattleMode.id == 'player2') {
+            this.startGame(player2)
+        } else {
+            this.startGame(player1)
         }
     }
 
@@ -438,8 +479,49 @@ cell.on("click", function () {
     if (!$(this).hasClass('range2')) {
         return
     }
-    
-    const oldPath = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)   
+
+    // // const opponentInFightingRange = game.opponentFinder(game.playerOnTurn.position)
+    // // console.log('i found/not found something', opponentInFightingRange, game.playerOnTurn.position, game.playerOnTurn.name)
+    // // console.log(opponentInFightingRange)
+    // // if (opponentInFightingRange) {
+    // //     const playerInBattleMode = game.playerOnTurn
+    // //     const opponentInBattleMode = opponentInFightingRange
+
+    // //     $('#battleDecisionModal .modal-body').text(playerInBattleMode.name + ' Turn! Select your action towards your opponent in adjacent position'+opponentInBattleMode.name+'!' + game.playerOnTurn.position.y + game.playerOnTurn.position.x + 'found' + opponentInFightingRange.position.y + opponentInFightingRange.position.x)
+    // //     $('#battleDecisionModal').modal('show')
+    // //     $('#attackButton').click(function () {
+    // //         let damageReceived = playerInBattleMode.weapon.damage
+    // //         if (opponentInBattleMode.defend == true) {
+    // //             damageReceived = damageReceived / 2
+    // //         }
+    // //         opponentInBattleMode.health -= damageReceived
+    // //         $('#battleDecisionModal').modal('hide')
+    // //         // game.startGame(opponentInBattleMode)
+    // //         alert(playerInBattleMode.id + '- waiting' + game.playerWaiting + '- playeronturn' + opponentInBattleMode.id)
+    // //         if (opponentInBattleMode.id == 'player2') {
+    // //             game.startGame(player2)
+    // //         } else {
+    // //             game.startGame(player1)
+    // //         }
+
+    // //     })
+    // //     $('#defendButton').click(function () {
+    // //         playerInBattleMode.defend == true
+    // //         $('#battleDecisionModal').modal('hide')
+    // //         alert(game.playerWaiting == opponentInBattleMode.id + game.playerWaiting + opponentInBattleMode.id)
+    // //         if (opponentInBattleMode.id == 'player2') {
+    // //             game.startGame(player2)
+    // //         } else {
+    // //             game.startGame(player1)
+    // //         }
+
+    // //     })
+
+    // }
+
+
+
+    const oldPath = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
 
     game.pathRemover(oldPath)
 
@@ -448,68 +530,109 @@ cell.on("click", function () {
         x: parseInt(this.getAttribute('data-pos-x'))
     }
 
-    const opponentInFightingRange = game.opponentFinder(newPosition, 1)
-    console.log('i found something', opponentInFightingRange)
-    if (opponentInFightingRange) {
-        alert(game.playerOnTurn+'found'+opponentInFightingRange)
-    }
+    // game.opponentInFightingRange = game.opponentFinder(newPosition, 1)
+    // console.log('i found something', game.opponentInFightingRange)
+
+    // if (game.opponentInFightingRange) {
+    //     alert(game.playerOnTurn+'found'+ game.opponentInFightingRange)
+    // }
 
 
-    game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn )
+    const opponentInFightingRange = game.opponentFinder(game.playerOnTurn.position)
+    console.log('i found/not found something', opponentInFightingRange)
+    const playerInBattleMode = game.playerOnTurn
+    const opponentInBattleMode = opponentInFightingRange
 
 
-    const playerOnTurnOrigin = game.playerOnTurn
-
-    const weaponOnPath = game.grid[newPosition.y][newPosition.x].findItemByType('weapon')
-
-    if (game.playerOnTurn.previousWeapon.id !== undefined) {
-        game.grid[game.playerOnTurn.position.y][game.playerOnTurn.position.x] = new Cell()
+    if (!opponentInFightingRange) {
+    
         game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
-        game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn.previousWeapon)
-        game.playerOnTurn.previousWeapon = {}
-    }
-    console.log('test',weaponOnPath)
-    if (weaponOnPath) {
-        if (game.playerOnTurn.weapon.id == 'default') {
-            game.removeItem(weaponOnPath.position.y, weaponOnPath.position.x, weaponOnPath)
+ 
+        const playerOnTurnOrigin = game.playerOnTurn
 
-            $(this).removeClass(weaponOnPath.id)
-            game.playerOnTurn.weapon = weaponOnPath
+        const weaponOnPath = game.grid[newPosition.y][newPosition.x].findItemByType('weapon')
 
-            console.log('weapon on path', weaponOnPath)
-            removeClassName(newPosition.y, newPosition.x, weaponOnPath)
-            game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
+        if (game.playerOnTurn.previousWeapon.id !== undefined) {
+            game.grid[game.playerOnTurn.position.y][game.playerOnTurn.position.x] = new Cell()
+            game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
+            game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn.previousWeapon)
+            game.playerOnTurn.previousWeapon = {}
+        }
+        console.log('test', weaponOnPath)
+        if (weaponOnPath) {
+            if (game.playerOnTurn.weapon.id == 'default') {
+                game.removeItem(weaponOnPath.position.y, weaponOnPath.position.x, weaponOnPath)
+
+                $(this).removeClass(weaponOnPath.id)
+                game.playerOnTurn.weapon = weaponOnPath
+            
+                console.log('weapon on path', weaponOnPath)
+                removeClassName(newPosition.y, newPosition.x, weaponOnPath)
+                game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
+
+            }
+            else {
+                let tempWeapon = game.playerOnTurn.weapon
+                game.playerOnTurn.previousWeapon = tempWeapon
+                tempWeapon.position = newPosition
+
+                game.playerOnTurn.weapon = weaponOnPath
+            
+                game.removeItem(newPosition.y, newPosition.x, weaponOnPath)
+
+                game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
+
+                game.grid[newPosition.y][newPosition.x].item.push(tempWeapon)
+
+            }
+        }
+
+        game.playerOnTurn.position = newPosition
+
+        game.playerOnTurn.weapon.position = game.playerOnTurn.position
+        game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
+
+        $(`#${game.playerOnTurn.id}Damage`).text(game.playerOnTurn.weapon.damage)
+        $(`#${game.playerOnTurn.id}WeaponImage`).attr('src', `img/${game.playerOnTurn.weapon.id}.png`)
+
+        game.turn += 1
+        $('#turnCounter').text(game.turn)
+
+        console.log('test', game.playerOnTurn.position.x, game.playerOnTurn.position.y)
+        if (game.playerWaiting == 'player2') {
+            game.startGame(player2)
         }
         else {
-            let tempWeapon = game.playerOnTurn.weapon
-            game.playerOnTurn.previousWeapon = tempWeapon
-            tempWeapon.position = newPosition
-
-            game.playerOnTurn.weapon = weaponOnPath
-            
-            game.removeItem(newPosition.y, newPosition.x, weaponOnPath)
-
-            game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
-
-            game.grid[newPosition.y][newPosition.x].item.push(tempWeapon)
-
+            game.startGame(player1)
         }
     }
-
-    game.playerOnTurn.position = newPosition
-
-    game.playerOnTurn.weapon.position = game.playerOnTurn.position
-    game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
-
-    console.log('test', game.playerOnTurn.position.x, game.playerOnTurn.position.y)
-
-    
-    if (game.playerWaiting == 'player2') {
-        game.startGame(player2)
-    }
     else {
-        game.startGame(player1)
+        $('#battleDecisionModal .modal-body').text(opponentInFightingRange.name + ' Turn! Select your action!' + game.playerOnTurn.position.y + game.playerOnTurn.position.x + 'found' + opponentInFightingRange.position.y + opponentInFightingRange.position.x)
+
+        $('#battleDecisionModal').modal('show')
     }
+
+    // const opponentInFightingRange = game.opponentFinder(newPosition)
+    // console.log('i found/not found something', opponentInFightingRange)
+    // const playerInBattleMode = opponentInFightingRange
+    // const opponentInBattleMode = game.playerOnTurn
+
+    // if (opponentInFightingRange) {
+    //     $('#battleDecisionModal .modal-body').text(opponentInFightingRange.name + ' Turn! Select your action!' + game.playerOnTurn.position.y + game.playerOnTurn.position.x + 'found' + opponentInFightingRange.position.y + opponentInFightingRange.position.x)
+        
+    //     $('#battleDecisionModal').modal('show')
+    // } 
+    // else {
+    //     if (game.playerWaiting == 'player2') {
+    //         game.startGame(player2)
+    //     }
+    //     else {
+    //         game.startGame(player1)
+    //     }
+    // }
+
+
+
     
     // const newPath = game.pathFinder(newPosition, game.playerOnTurn.rangeLimit)
 
@@ -518,4 +641,14 @@ cell.on("click", function () {
 
 console.table(game.grid)
 
+})
+
+$('#attackButton').on('click', function () {
+    game.attack()
+})
+$('#defendButton').on('click', function () {
+    game.defend()
+})
+$('#resetButton').on('click', function () {
+    // location.reload()
 })
