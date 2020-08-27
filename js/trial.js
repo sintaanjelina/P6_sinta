@@ -78,7 +78,7 @@ class Game extends Cell {
     }
 
     startGame(playerObject) {
-        // $("div#map > div").removeClass('range2');
+        $("div#map > div>div").removeClass('range2');
         if (playerObject.id === 'player1') {
             this.playerOnTurn = playerObject
             this.playerWaiting = 'player2'
@@ -392,33 +392,28 @@ class Game extends Cell {
         const playerInBattleMode = this.playerOnTurn
         const opponentInBattleMode = this.opponentFinder(this.playerOnTurn.position)
         let damageReceived = playerInBattleMode.weapon.damage
+
+        playerInBattleMode.defend= false
         if (opponentInBattleMode.defend == true) {
-            damageReceived = damageReceived / 2
+           damageReceived/=2
         }
         console.log('attack game player', this.playerOnTurn)
         console.log('attack ',  playerInBattleMode, 'kek op',opponentInBattleMode)
         opponentInBattleMode.health -= damageReceived
-        $(`${opponentInBattleMode.id}Health`).text(opponentInBattleMode.health)
         $('#battleDecisionModal').modal('hide')
-        // game.startGame(opponentInBattleMode)
+        $(`#${opponentInBattleMode.id}Health`).text(opponentInBattleMode.health)
+        
         alert(playerInBattleMode.id + '- waiting' + this.playerWaiting + '- playeronturn' + opponentInBattleMode.id)
-        if (opponentInBattleMode.id == 'player2') {
-            this.startGame(player2)
-        } else {
-            this.startGame(player1)
-        }
+        this.startGame(opponentInBattleMode)
     }
     defend() {
+        // const playerInBattleMode = this.grid[this.playerOnTurn.position.y][this.playerOnTurn.position.x].findItemById(this.playerOnTurn.id)
         const playerInBattleMode = this.playerOnTurn
         const opponentInBattleMode = this.opponentFinder(this.playerOnTurn.position)
-        playerInBattleMode.defend == true
+        playerInBattleMode.defend = true
         $('#battleDecisionModal').modal('hide')
-        alert(this.playerWaiting == opponentInBattleMode.id + this.playerWaiting + opponentInBattleMode.id)
-        if (opponentInBattleMode.id == 'player2') {
-            this.startGame(player2)
-        } else {
-            this.startGame(player1)
-        }
+        alert(this.playerOnTurn.defend + ' ' + playerInBattleMode + '=' + this.playerOnTurn + ' ' + opponentInBattleMode)
+        this.startGame(opponentInBattleMode)
     }
 
 }
@@ -475,79 +470,43 @@ function removeClassName(coordinates, objClass) {
     }
 };
 
+
+$('#attackButton').on('click', function () {
+    game.attack()
+})
+$('#defendButton').on('click', function () {
+    game.defend()
+})
+
 cell.on("click", function () {
-    if (!$(this).hasClass('range2')) {
-        return
+    if (!$(this).hasClass('range2') && !$(this).hasClass(game.playerWaiting) ) {
+        return 
     }
 
-    // // const opponentInFightingRange = game.opponentFinder(game.playerOnTurn.position)
-    // // console.log('i found/not found something', opponentInFightingRange, game.playerOnTurn.position, game.playerOnTurn.name)
-    // // console.log(opponentInFightingRange)
-    // // if (opponentInFightingRange) {
-    // //     const playerInBattleMode = game.playerOnTurn
-    // //     const opponentInBattleMode = opponentInFightingRange
-
-    // //     $('#battleDecisionModal .modal-body').text(playerInBattleMode.name + ' Turn! Select your action towards your opponent in adjacent position'+opponentInBattleMode.name+'!' + game.playerOnTurn.position.y + game.playerOnTurn.position.x + 'found' + opponentInFightingRange.position.y + opponentInFightingRange.position.x)
-    // //     $('#battleDecisionModal').modal('show')
-    // //     $('#attackButton').click(function () {
-    // //         let damageReceived = playerInBattleMode.weapon.damage
-    // //         if (opponentInBattleMode.defend == true) {
-    // //             damageReceived = damageReceived / 2
-    // //         }
-    // //         opponentInBattleMode.health -= damageReceived
-    // //         $('#battleDecisionModal').modal('hide')
-    // //         // game.startGame(opponentInBattleMode)
-    // //         alert(playerInBattleMode.id + '- waiting' + game.playerWaiting + '- playeronturn' + opponentInBattleMode.id)
-    // //         if (opponentInBattleMode.id == 'player2') {
-    // //             game.startGame(player2)
-    // //         } else {
-    // //             game.startGame(player1)
-    // //         }
-
-    // //     })
-    // //     $('#defendButton').click(function () {
-    // //         playerInBattleMode.defend == true
-    // //         $('#battleDecisionModal').modal('hide')
-    // //         alert(game.playerWaiting == opponentInBattleMode.id + game.playerWaiting + opponentInBattleMode.id)
-    // //         if (opponentInBattleMode.id == 'player2') {
-    // //             game.startGame(player2)
-    // //         } else {
-    // //             game.startGame(player1)
-    // //         }
-
-    // //     })
-
-    // }
+    if ($(this).hasClass(game.playerWaiting)) {
+        const opponentInFightingRange1 = game.opponentFinder(game.playerOnTurn.position)
+        console.log('i found/not found something', opponentInFightingRange1)
+        const playerInBattleMode1 = opponentInFightingRange1
+        const opponentInBattleMode1 = game.playerOnTurn
 
 
+        $('#battleDecisionModal .modal-body').text(game.playerOnTurn.name + ' Turn! Select your action!' + game.playerOnTurn.position.y + game.playerOnTurn.position.x + 'found' + opponentInFightingRange1.position.y + opponentInFightingRange1.position.x + opponentInFightingRange1.name)
 
-    const oldPath = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
-
-    game.pathRemover(oldPath)
-
-    const newPosition = {
-        y: parseInt(this.getAttribute('data-pos-y')),
-        x: parseInt(this.getAttribute('data-pos-x'))
+        $('#battleDecisionModal').modal('show')
     }
+    else {
 
-    // game.opponentInFightingRange = game.opponentFinder(newPosition, 1)
-    // console.log('i found something', game.opponentInFightingRange)
+        const oldPath = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
 
-    // if (game.opponentInFightingRange) {
-    //     alert(game.playerOnTurn+'found'+ game.opponentInFightingRange)
-    // }
+        game.pathRemover(oldPath)
 
+        const newPosition = {
+            y: parseInt(this.getAttribute('data-pos-y')),
+            x: parseInt(this.getAttribute('data-pos-x'))
+        }
 
-    const opponentInFightingRange = game.opponentFinder(game.playerOnTurn.position)
-    console.log('i found/not found something', opponentInFightingRange)
-    const playerInBattleMode = game.playerOnTurn
-    const opponentInBattleMode = opponentInFightingRange
-
-
-    if (!opponentInFightingRange) {
-    
         game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
- 
+
         const playerOnTurnOrigin = game.playerOnTurn
 
         const weaponOnPath = game.grid[newPosition.y][newPosition.x].findItemByType('weapon')
@@ -565,7 +524,7 @@ cell.on("click", function () {
 
                 $(this).removeClass(weaponOnPath.id)
                 game.playerOnTurn.weapon = weaponOnPath
-            
+        
                 console.log('weapon on path', weaponOnPath)
                 removeClassName(newPosition.y, newPosition.x, weaponOnPath)
                 game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
@@ -577,13 +536,12 @@ cell.on("click", function () {
                 tempWeapon.position = newPosition
 
                 game.playerOnTurn.weapon = weaponOnPath
-            
+        
                 game.removeItem(newPosition.y, newPosition.x, weaponOnPath)
 
                 game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
 
                 game.grid[newPosition.y][newPosition.x].item.push(tempWeapon)
-
             }
         }
 
@@ -595,45 +553,33 @@ cell.on("click", function () {
         $(`#${game.playerOnTurn.id}Damage`).text(game.playerOnTurn.weapon.damage)
         $(`#${game.playerOnTurn.id}WeaponImage`).attr('src', `img/${game.playerOnTurn.weapon.id}.png`)
 
-        game.turn += 1
-        $('#turnCounter').text(game.turn)
-
-        console.log('test', game.playerOnTurn.position.x, game.playerOnTurn.position.y)
         if (game.playerWaiting == 'player2') {
             game.startGame(player2)
         }
         else {
             game.startGame(player1)
         }
+
+        // const opponentInFightingRange = game.opponentFinder(game.playerOnTurn.position)
+        // console.log('i found/not found something', opponentInFightingRange)
+        // const playerInBattleMode = opponentInFightingRange
+        // const opponentInBattleMode = game.playerOnTurn
+
+
+        // console.log('attack dionclick bawah', playerInBattleMode)
+        // console.log('attack opponent dionclick bawah', opponentInBattleMode)
+        // // game.target = { x: newPosition.x, y: newPosition.y }
+
+        // if (opponentInFightingRange) {
+        //     $('#battleDecisionModal .modal-body').text(game.playerOnTurn.name + ' Turn! Select your action!' + game.playerOnTurn.position.y + game.playerOnTurn.position.x + 'found' + opponentInFightingRange.position.y + opponentInFightingRange.position.x + opponentInFightingRange.name)
+
+        //     $('#battleDecisionModal').modal('show')
+        // }
     }
-    else {
-        $('#battleDecisionModal .modal-body').text(opponentInFightingRange.name + ' Turn! Select your action!' + game.playerOnTurn.position.y + game.playerOnTurn.position.x + 'found' + opponentInFightingRange.position.y + opponentInFightingRange.position.x)
+    game.turn += 1
+    $('#turnCounter').text(game.turn)
 
-        $('#battleDecisionModal').modal('show')
-    }
-
-    // const opponentInFightingRange = game.opponentFinder(newPosition)
-    // console.log('i found/not found something', opponentInFightingRange)
-    // const playerInBattleMode = opponentInFightingRange
-    // const opponentInBattleMode = game.playerOnTurn
-
-    // if (opponentInFightingRange) {
-    //     $('#battleDecisionModal .modal-body').text(opponentInFightingRange.name + ' Turn! Select your action!' + game.playerOnTurn.position.y + game.playerOnTurn.position.x + 'found' + opponentInFightingRange.position.y + opponentInFightingRange.position.x)
-        
-    //     $('#battleDecisionModal').modal('show')
-    // } 
-    // else {
-    //     if (game.playerWaiting == 'player2') {
-    //         game.startGame(player2)
-    //     }
-    //     else {
-    //         game.startGame(player1)
-    //     }
-    // }
-
-
-
-    
+   
     // const newPath = game.pathFinder(newPosition, game.playerOnTurn.rangeLimit)
 
     // game.pathGenerator(newPath)
@@ -641,14 +587,4 @@ cell.on("click", function () {
 
 console.table(game.grid)
 
-})
-
-$('#attackButton').on('click', function () {
-    game.attack()
-})
-$('#defendButton').on('click', function () {
-    game.defend()
-})
-$('#resetButton').on('click', function () {
-    // location.reload()
 })

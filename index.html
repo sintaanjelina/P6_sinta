@@ -18,19 +18,77 @@
 </head>
 
 <body>
+    <header>
+        <h1 class="text-center mt-1"> Project 6</h1>
+    </header>
     <main>
-        <div class="container-fluid my-5">
-            <div class="row py-5">
-                <div class="col">
-                    <h1 class="text-center my-5"> Project 6</h1>
-                </div>
-            </div>
-            <div>
-            </div>
+        <div class="container-fluid my-4 ">
             <div class="row">
-                <div class="col text-center">
+                <div class="col-8 text-center">
                     <div id="map">
                         <!--generate with game.js-->
+                    </div>
+                </div>
+                <div class="col py-2 informations">
+                    <div class="card text-center mb-2" id="player1InfoCard" style="width: 18rem;">
+                        <h5 class="card-title"> Player 1</h5>
+                        <div>
+                            <img class="card-img-top mx-auto"  src="img/player1.png" style="width:50px;" alt="player1">
+                            <img class="card-img-top mx-auto" id="player1WeaponImage" src="img/default.png" style="width:50px;" alt="player1">
+                        </div>
+                        <h5 class="card-subtitle pt-2"> Mario </h5>
+                        <div class="row mx-auto">
+                            <p>Health: </p>
+                            <p class="px-2" id="player1Health"> 100  </p>
+                            <p>Damage: </p>
+                            <p class="px-2 " id="player1Damage">10</p>
+                        </div>
+                    </div>
+                    <div class="card text-center mb-2" id="player2InfoCard" style="width: 18rem;">
+                        <h5 class="card-title"> Player 2</h5>
+                        <div>
+                            <img class="card-img-top mx-auto" src="img/player2.png" style="width:50px;" alt="player2">
+                            <img class="card-img-top mx-auto " id="player2WeaponImage" src="img/default.png" style="width:50px;" alt="player2">
+                        </div>
+                        <h5 class="card-subtitle pt-2"> Luigi </h5>
+                        <div class="row mx-auto ">
+                            <p>Health: </p>
+                            <p class="px-2 " id="player2Health"> 100 </p>
+                            <p>Damage: </p>
+                            <p class="px-2 " id="player2Damage">10</p>
+                        </div>
+                    </div>
+                    <div class="card text-center mb-2" style="width: 18rem;">
+                        <div class="row mx-auto ">
+                            <p>Turn :  </p>
+                            <p class="px-2" id="turnCounter"> 0 </p>
+                        </div>
+                    </div>
+                    <div class="card text-center mb-2" style="width: 18rem;">
+                        <div class="row mx-auto ">
+                            <p>Player Turn : </p>
+                            <p class="px-2" id="activePlayerName"> Mario </p>
+                        </div>
+                    </div>
+                </div>
+           </div>
+        </div>
+        <!-- data keyboard false so modal cannot be closed by ESC and data-backdrop static so any click outside modal area won't close it -->
+        <div class="modal fade" id="battleDecisionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title mx-auto">Battle Mode Active!</h5>
+                        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button> -->
+                    </div>
+                    <div class="modal-body">
+                        <p> Select Battle Action</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="defendButton">Defend</button>
+                        <button type="button" class="btn btn-danger" id="attackButton">Attack</button>
                     </div>
                 </div>
             </div>
