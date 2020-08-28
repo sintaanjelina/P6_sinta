@@ -239,18 +239,6 @@ class Game extends Cell {
         return false
     }
 
-    battleDecision(opponentInFightingRange, clickTarget) {
-        alert('click on opponent place if you want to attack or defend')
-        const {x,y} = opponentInFightingRange.position
-        Object.values(newPath).forEach((positions) => {
-            for (let i = 0; i < positions.length; i++) {
-                if (clickTarget.x == x && clickTarget.y == y) {
-                    
-                }   
-            }
-        })
-    }
-    
     pathRemover(oldPath) {
         Object.values(oldPath).forEach((positions) => {
             for (let i = 0; i < positions.length; i++) {
