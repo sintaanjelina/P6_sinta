@@ -382,7 +382,8 @@ class Game extends Cell {
                 const item = this.grid[y][x].findItemById(Objtype.id)
                 if (item) {
                     console.log('find', item, item.position.y, item.position.x)
-                    console.log('weapon',y, x)
+                    console.log('weapon', y, x)
+                    return { x: x, y:y}
                 }
             }
         }
@@ -391,31 +392,59 @@ class Game extends Cell {
     attack() {
         const playerInBattleMode = this.playerOnTurn
         const opponentInBattleMode = this.opponentFinder(this.playerOnTurn.position)
+
         let damageReceived = playerInBattleMode.weapon.damage
 
+        //if player click attack their defend status is false
         playerInBattleMode.defend= false
+        
+        //if opponent click on defend before (defend status true) the player attack damage is 50% of player weapon total damage
         if (opponentInBattleMode.defend == true) {
            damageReceived/=2
         }
+
         console.log('attack game player', this.playerOnTurn)
-        console.log('attack ',  playerInBattleMode, 'kek op',opponentInBattleMode)
+        console.log('attack ', playerInBattleMode, 'kek op', opponentInBattleMode)
+        
+        //decrease opponent health by player weapon damage 
         opponentInBattleMode.health -= damageReceived
+
+        //close modal
         $('#battleDecisionModal').modal('hide')
+        
+        //if opponent health is negative integer then change to zero (no minus health)
+        if (opponentInBattleMode.health < 0) {
+            opponentInBattleMode.health = 0
+        }
+
+        //change health in opponent health information
         $(`#${opponentInBattleMode.id}Health`).text(opponentInBattleMode.health)
         
+        //if opponent health equals zero then show battleWinner modal contains who won
+        if (opponentInBattleMode.health == 0) {
+            $('#battleWinnerModal .modal-title').text(playerInBattleMode.name + ' won!')
+            $('#battleWinnerModal .modal-body').text(playerInBattleMode.name+ ' killed '+ opponentInBattleMode.name)
+            $('#battleWinnerModal').modal('show');
+        }
         alert(playerInBattleMode.id + '- waiting' + this.playerWaiting + '- playeronturn' + opponentInBattleMode.id)
+
+        //opponent turn to play game
         this.startGame(opponentInBattleMode)
     }
     defend() {
-        // const playerInBattleMode = this.grid[this.playerOnTurn.position.y][this.playerOnTurn.position.x].findItemById(this.playerOnTurn.id)
         const playerInBattleMode = this.playerOnTurn
         const opponentInBattleMode = this.opponentFinder(this.playerOnTurn.position)
+        
+        // player defend status is true
         playerInBattleMode.defend = true
+
+        //close modal
         $('#battleDecisionModal').modal('hide')
         alert(this.playerOnTurn.defend + ' ' + playerInBattleMode + '=' + this.playerOnTurn + ' ' + opponentInBattleMode)
+        
+        //opponent turn to play
         this.startGame(opponentInBattleMode)
     }
-
 }
 
 let numberOfBlocks = 20;
@@ -425,7 +454,8 @@ const defaultWeapon = new Weapon('default', 'hand', '10')
 const weapon1 = new Weapon('mushroom1', 'Mushroom 1' , 50)
 const weapon2 = new Weapon('mushroom2', 'Mushroom 2' , 40)
 const weapon3 = new Weapon('mushroom3', 'Mushroom 3' , 30)
-const weapon4 = new Weapon('mushroom4', 'Mushroom 4' , 15)
+const weapon4 = new Weapon('mushroom4', 'Mushroom 4', 15)
+    
 const game = new Game(10, 10)
 
 game.generateGrid()
@@ -477,18 +507,20 @@ $('#attackButton').on('click', function () {
 $('#defendButton').on('click', function () {
     game.defend()
 })
+$('#resetButton').on('click', function () {
+    location.reload()
+})
+
 
 cell.on("click", function () {
     if (!$(this).hasClass('range2') && !$(this).hasClass(game.playerWaiting) ) {
         return 
     }
 
+    const opponentInFightingRange1 = game.opponentFinder(game.playerOnTurn.position)
+    console.log('i found/not found something', opponentInFightingRange1)
+    
     if ($(this).hasClass(game.playerWaiting)) {
-        const opponentInFightingRange1 = game.opponentFinder(game.playerOnTurn.position)
-        console.log('i found/not found something', opponentInFightingRange1)
-        const playerInBattleMode1 = opponentInFightingRange1
-        const opponentInBattleMode1 = game.playerOnTurn
-
 
         $('#battleDecisionModal .modal-body').text(game.playerOnTurn.name + ' Turn! Select your action!' + game.playerOnTurn.position.y + game.playerOnTurn.position.x + 'found' + opponentInFightingRange1.position.y + opponentInFightingRange1.position.x + opponentInFightingRange1.name)
 
@@ -560,21 +592,18 @@ cell.on("click", function () {
             game.startGame(player1)
         }
 
-        // const opponentInFightingRange = game.opponentFinder(game.playerOnTurn.position)
-        // console.log('i found/not found something', opponentInFightingRange)
-        // const playerInBattleMode = opponentInFightingRange
-        // const opponentInBattleMode = game.playerOnTurn
+        const opponentInFightingRange = game.opponentFinder(game.playerOnTurn.position)
+        console.log('i found/not found something', opponentInFightingRange)
+        
+        if (opponentInFightingRange) {
+    
+            $('#battleDecisionModal .modal-body').text(game.playerOnTurn.name + ' Turn! Select your action!' + game.playerOnTurn.position.y + game.playerOnTurn.position.x + 'found' + opponentInFightingRange.position.y + opponentInFightingRange.position.x + opponentInFightingRange.name)
 
-
-        // console.log('attack dionclick bawah', playerInBattleMode)
-        // console.log('attack opponent dionclick bawah', opponentInBattleMode)
-        // // game.target = { x: newPosition.x, y: newPosition.y }
-
-        // if (opponentInFightingRange) {
-        //     $('#battleDecisionModal .modal-body').text(game.playerOnTurn.name + ' Turn! Select your action!' + game.playerOnTurn.position.y + game.playerOnTurn.position.x + 'found' + opponentInFightingRange.position.y + opponentInFightingRange.position.x + opponentInFightingRange.name)
-
-        //     $('#battleDecisionModal').modal('show')
-        // }
+            $('#battleDecisionModal').modal('show')
+        }
+        else {
+            
+        }
     }
     game.turn += 1
     $('#turnCounter').text(game.turn)
@@ -588,3 +617,4 @@ cell.on("click", function () {
 console.table(game.grid)
 
 })
+
