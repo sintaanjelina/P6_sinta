@@ -15,10 +15,6 @@
  background-color: #2f2712;
 }
 
-.col .active {
-  outline: 5px solid black;
-}
-
 .grid {
   width: 610px;
   height: 60px;
