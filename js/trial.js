@@ -343,18 +343,6 @@ class Game extends Cell {
         }
     }
 
-
-    findItems(Objtype) {
-        for (let y = 0; y < this.grid.length; y++) {
-            for (let x = 0; x < this.grid[y].length; x++) {
-                const item = this.grid[y][x].findItemById(Objtype.id)
-                if (item) {
-                    return { x: x, y:y}
-                }
-            }
-        }
-    }
-
     attack() {
         const playerInBattleMode = this.playerOnTurn
         const opponentInBattleMode = this.opponentFinder(this.playerOnTurn.position)
@@ -394,6 +382,7 @@ class Game extends Cell {
         this.startGame(opponentInBattleMode)
 
     }
+
     defend() {
         const playerInBattleMode = this.playerOnTurn
         const opponentInBattleMode = this.opponentFinder(this.playerOnTurn.position)
@@ -408,13 +397,14 @@ class Game extends Cell {
         this.startGame(opponentInBattleMode)
     }
 
+    //show battle decision modal when opponent is in adjacent position  
     battleDecisionModal() {
         const opponentInFightingRange = this.opponentFinder(this.playerOnTurn.position)
         if (opponentInFightingRange) {
-
             $('#battleDecisionModal .modal-body').text(this.playerOnTurn.name + ' Turn! Select your action!' + this.playerOnTurn.position.y + this.playerOnTurn.position.x + 'found' + opponentInFightingRange.position.y + opponentInFightingRange.position.x + opponentInFightingRange.name)
 
-            $('#battleDecisionModal').addClass('show d-block')        }
+            $('#battleDecisionModal').addClass('show d-block')
+        }
     }
 }
 
@@ -449,26 +439,6 @@ while (numberOfBlocks != 0) {
 
 game.startGame(player1)
 var cell = $("div#map > div>div")
-
-function addClassName(coordinates, objClass) {
-    const { y, x } = coordinates
-    const cellId = `#col-${y}${x}`
-    const cellElement = $(cellId)
-    if (!cellElement.hasClass(objClass)) {
-        cellElement.addClass(objClass);        
-        return true;
-    }
-}
-
-function removeClassName(coordinates, objClass) {
-    const { y, x } = coordinates
-    const cellId = `#col-${y}${x}`
-    const cellElement = $(cellId)
-    if (cellElement.hasClass(objClass)) {
-        cellElement.removeClass(objClass);
-        return true;
-    }
-};
 
 
 $('#attackButton').on('click', function () {
@@ -563,7 +533,27 @@ cell.on("click", function () {
     game.turn += 1
     $('#turnCounter').text(game.turn)
 
-console.table(game.grid)
-
 })
+
+
+/********************* Global Functions *********************/
+function addClassName(coordinates, objClass) {
+    const { y, x } = coordinates
+    const cellId = `#col-${y}${x}`
+    const cellElement = $(cellId)
+    if (!cellElement.hasClass(objClass)) {
+        cellElement.addClass(objClass);
+        return true;
+    }
+}
+
+function removeClassName(coordinates, objClass) {
+    const { y, x } = coordinates
+    const cellId = `#col-${y}${x}`
+    const cellElement = $(cellId)
+    if (cellElement.hasClass(objClass)) {
+        cellElement.removeClass(objClass);
+        return true;
+    }
+};
 
