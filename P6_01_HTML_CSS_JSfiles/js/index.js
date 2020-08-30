@@ -112,10 +112,7 @@ class Game extends Cell {
 
 	//get array of available path in up down left right direction for player movement range in its positiom
 	pathFinder(position, length) {
-		const {
-			x,
-			y
-		} = position
+		const { x, y } = position
 		const path = {
 			up: [],
 			down: [],
@@ -204,10 +201,7 @@ class Game extends Cell {
 
 	// get opponent in adjacent position to player
 	opponentFinder(playerPosition, fightingRange = 1) {
-		const {
-			x,
-			y
-		} = playerPosition
+        const { x, y } = playerPosition
 		const opponent = {
 			up: [],
 			down: [],
@@ -628,6 +622,6 @@ function removeClassName(coordinates, objClass) {
 		cellElement.removeClass(objClass);
 		return true;
 	}
-};
+}
 
 console.table(game.grid)
