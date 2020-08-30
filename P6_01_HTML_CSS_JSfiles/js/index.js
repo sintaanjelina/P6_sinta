@@ -57,11 +57,15 @@ class Cell {
 	constructor() {
 		this.blocked = false;
 		this.item = [];
-	}
+    }
+    
+    //find Object by id in array of item objects
 	findItemById(id) {
 		return this.item.find(element => element.id == id)
-	}
-	findItemByType(type) {
+    }
+    
+    //find Object by type in array of item objects
+    findItemByType(type) {
 		return this.item.find(element => element.type == type)
 	}
 }
@@ -110,6 +114,86 @@ class Game extends Cell {
             maps.appendChild(row)
         }
     }
+
+    //get random number y and x for random placement of item in game map
+    getRandomCell() {
+        var randIntY = Math.floor(Math.random() * Math.floor(this.height));
+        var randIntX = Math.floor(Math.random() * Math.floor(this.width));
+
+        return ({ y: randIntY, x: randIntX })
+    }
+
+    // add item at position y and x to game map
+    addItem(y, x, item) {
+        if (!(this.grid[y][x].item && this.grid[y][x].item.length)) {
+            item.position.y = y;
+            item.position.x = x;
+
+            if (item.type === 'weapon') {
+                this.grid[y][x].blocked = false
+
+            }
+            if (item.type === 'block' || item.type === 'player') {
+                this.grid[y][x].blocked = true
+            }
+
+            this.grid[y][x].item.push(item)
+            addClassName({ y: y, x: x }, item.id)
+
+            return true
+        }
+        return false
+    }
+
+    //remove item at position y and x from game map
+    removeItem(y, x, item) {
+        this.grid[y][x].blocked = false
+
+        if (this.grid[y][x].item && this.grid[y][x].item.length) {
+            if (this.grid[y][x].item[0].id == item.id) {
+                this.grid[y][x].item.splice(0, 1)
+                removeClassName({ y: y, x: x }, item.id)
+            }
+        }
+    }
+
+    //create item by getting random number for position and add item in the position with condition
+    createItem(itemObject, amount=1) {
+        let numavailableCell = 0;
+        for (let y = 0; y < this.grid.length; y++) {
+            for (let x = 0; x < this.grid[y].length; x++) {
+                if (this.grid[y][x].item.length <= 0) {
+                    numavailableCell++;
+                }
+            }
+        }
+        if (amount <= numavailableCell) {
+            while (amount != 0) {
+                var randIndex = this.getRandomCell()
+                if (itemObject.type == 'player') {
+                    var adjacentOpponent = this.opponentFinder(randIndex)
+                    if (!adjacentOpponent) {
+                        var addItemResult = this.addItem(randIndex.y, randIndex.x, itemObject)
+                        if (addItemResult == true) {
+                            amount--
+                        }
+                    }
+                } else {
+                    var addItemResult = this.addItem(randIndex.y, randIndex.x, itemObject)
+                    if (addItemResult == true) {
+                        amount--
+                    }
+                }
+
+            }
+            return true
+        } else if (amount > numavailableCell) {
+            console.log(Error("All " + amount + itemObject.name + " cannot be generated - no space left " + "Amount item: " + amount + " is greater then numavailableCell: " + numavailableCell));
+            alert(Error("All " + amount + itemObject.name + " cannot be generated - no space left " + "Amount item: " + amount + " is greater then numavailableCell: " + numavailableCell));
+            return amount
+        }
+    }
+
 
 	//condition when player given turn
 	startGame(playerObject) {
@@ -285,89 +369,6 @@ class Game extends Cell {
 		})
 	}
 
-	//remove item at position y and x from game map
-	removeItem(y, x, item) {
-		this.grid[y][x].blocked = false
-
-		if (this.grid[y][x].item && this.grid[y][x].item.length) {
-			if (this.grid[y][x].item[0].id == item.id) {
-				this.grid[y][x].item.splice(0, 1)
-				removeClassName({
-					y: y,
-					x: x
-				}, item.id)
-			}
-		}
-	}
-
-	// add item at position y and x to game map
-	addItem(y, x, item) {
-		if (!(this.grid[y][x].item && this.grid[y][x].item.length)) {
-			item.position.y = y;
-			item.position.x = x;
-
-			if (item.type === 'weapon') {
-				this.grid[y][x].blocked = false
-
-			}
-			if (item.type === 'block' || item.type === 'player') {
-				this.grid[y][x].blocked = true
-			}
-
-			this.grid[y][x].item.push(item)
-			addClassName({
-				y: y,
-				x: x
-			}, item.id)
-
-			return true
-		}
-		return false
-	}
-
-	//get random number y and x for random placement of item in game map
-	getRandomCell() {
-		var randIntY = Math.floor(Math.random() * Math.floor(this.height));
-		var randIntX = Math.floor(Math.random() * Math.floor(this.width));
-
-		return ({ y: randIntY, x: randIntX })
-	}
-
-	//create item by getting random number for position and add item in the position with condition
-	createItem(itemObject, amount) {
-		let numavailableCell = 0;
-		for (let y = 0; y < this.grid.length; y++) {
-			for (let x = 0; x < this.grid[y].length; x++) {
-				if (this.grid[y][x].item.length <= 0) {
-					numavailableCell++;
-				}
-			}
-		}
-		if (amount <= numavailableCell) {
-			while (amount != 0) {
-				var randIndex = this.getRandomCell()
-				if (itemObject.type == 'player') {
-					var adjacentOpponent = this.opponentFinder(randIndex)
-					if (!adjacentOpponent) {
-						var addItemResult = this.addItem(randIndex.y, randIndex.x, itemObject)
-						if (addItemResult == true) {
-							amount--
-						}
-					}
-				} else {
-					var addItemResult = this.addItem(randIndex.y, randIndex.x, itemObject)
-					if (addItemResult == true) {
-						amount--
-					}
-				}
-
-			}
-		} else if (amount > numavailableCell) {
-			console.log(Error("All " + amount + itemObject.name + " cannot be generated - no space left " + "Amount item: " + amount + " is greater then numavailableCell: " + numavailableCell));
-			alert(Error("All " + amount + itemObject.name + " cannot be generated - no space left " + "Amount item: " + amount + " is greater then numavailableCell: " + numavailableCell));
-		}
-	}
-
 
 	//player do attack action condition and process
 	attack() {
@@ -407,7 +408,6 @@ class Game extends Cell {
 
 		//opponent turn to play game
 		this.startGame(opponentInBattleMode)
-
 	}
 
 	// condition happen to game when player do defend action
@@ -437,7 +437,7 @@ class Game extends Cell {
 }
 
 //inisialise game with maps size 10x10
-const game = new Game(10, 10)
+const game = new Game(10,10)
 
 //generate game maps
 game.generateGrid()
@@ -446,29 +446,30 @@ game.createMaps()
 //generate blocks
 let numberOfBlocks = 20;
 while (numberOfBlocks != 0) {
-	var randIndex = game.getRandomCell()
-	const block = new Block('block')
-	if (game.addItem(randIndex.y, randIndex.x, block) == true) {
-		numberOfBlocks--
-	}
+    if (game.createItem(new Block('block'))==true) {
+        numberOfBlocks--
+    }
 }
 
-//inisialize object player1 , player2, defaultWeapon, weapon1, weapon2, weapon3, and weapon 4
+//inisialize object player1 , player2, 
 const player1 = new Player('player1', 'Mario')
 const player2 = new Player('player2', 'Luigi')
-const defaultWeapon = new Weapon('default', 'hand', '10')
+
+
+//inisialize defaultWeapon, weapon1, weapon2, weapon3, and weapon 4
 const weapon1 = new Weapon('mushroom1', 'Mushroom 1', 50)
 const weapon2 = new Weapon('mushroom2', 'Mushroom 2', 40)
 const weapon3 = new Weapon('mushroom3', 'Mushroom 3', 30)
 const weapon4 = new Weapon('mushroom4', 'Mushroom 4', 15)
 
 //create those items to game maps
-game.createItem(player1, 1)
-game.createItem(player2, 1)
-game.createItem(weapon1, 1)
-game.createItem(weapon2, 1)
-game.createItem(weapon3, 1)
-game.createItem(weapon4, 1)
+game.createItem(player1)
+game.createItem(player2)
+game.createItem(weapon1)
+game.createItem(weapon2)
+game.createItem(weapon3)
+game.createItem(weapon4)
+
 
 // Player 1 start game
 game.startGame(player1)
@@ -590,6 +591,7 @@ cell.on("click", function () {
 })
 
 
+
 /********************* Global Functions *********************/
 //add object class name in cell element if not exist
 function addClassName(coordinates, objClass) {
@@ -612,5 +614,4 @@ function removeClassName(coordinates, objClass) {
 		return true;
 	}
 }
-
 console.table(game.grid)
