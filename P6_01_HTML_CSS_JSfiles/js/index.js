@@ -78,6 +78,39 @@ class Game extends Cell {
 		this.turn = 0;
 	}
 
+    //generate game board data
+    generateGrid() {
+        for (let y = 0; y < this.height; y++) {
+            this.grid.push([])
+            for (let x = 0; x < this.width; x++) {
+                this.grid[y].push(new Cell())
+            }
+        }
+    }
+
+    //generate game maps
+    createMaps() {
+        const maps = document.getElementById('map')
+        maps.classList.add('container', 'd-flex', 'flex-column', 'justify-content-left')
+        for (let y = 0; y < this.grid.length; y++) {
+            const row = document.createElement('div')
+            row.classList.add('row')
+            for (let x = 0; x < this.grid[y].length; x++) {
+                const column = document.createElement('div')
+
+                //add data attributes to set the y and x value of the cell
+                column.setAttribute('data-pos-y', y)
+                column.setAttribute('data-pos-x', x)
+
+                column.classList.add('col', 'p-3', 'border')
+                column.id = 'col-' + y + x
+                column.textContent = 'col-' + y + x
+                row.appendChild(column)
+            }
+            maps.appendChild(row)
+        }
+    }
+
 	//condition when player given turn
 	startGame(playerObject) {
 		$("div#map > div>div").removeClass('range2');
@@ -98,16 +131,6 @@ class Game extends Cell {
 		this.pathGenerator(path)
 
 		this.battleDecisionModal()
-	}
-
-	//generate game board data
-	generateGrid() {
-		for (let y = 0; y < this.height; y++) {
-			this.grid.push([])
-			for (let x = 0; x < this.width; x++) {
-				this.grid[y].push(new Cell())
-			}
-		}
 	}
 
 	//get array of available path in up down left right direction for player movement range in its positiom
@@ -131,10 +154,7 @@ class Game extends Cell {
 						if (newY >= 0 && newY < this.grid.length && !blocked) {
 							const cellBlocked = this.grid[newY][x].blocked
 							if (!cellBlocked) {
-								value.push({
-									y: newY,
-									x: x
-								})
+								value.push({y: newY, x: x})
 							} else {
 								blocked = true
 							}
@@ -145,10 +165,7 @@ class Game extends Cell {
 						if (newY >= 0 && newY < this.grid.length && !blocked) {
 							const cellBlocked = this.grid[newY][x].blocked
 							if (!cellBlocked) {
-								value.push({
-									y: newY,
-									x
-								})
+								value.push({y: newY, x})
 							} else {
 								blocked = true
 							}
@@ -160,10 +177,7 @@ class Game extends Cell {
 						if (newX >= 0 && newX < this.grid[y].length && !blocked) {
 							const cellBlocked = this.grid[y][newX].blocked
 							if (!cellBlocked) {
-								value.push({
-									y,
-									x: newX
-								})
+								value.push({y, x: newX})
 							} else {
 								blocked = true
 							}
@@ -175,10 +189,7 @@ class Game extends Cell {
 						if (newX >= 0 && newX < this.grid[y].length && !blocked) {
 							const cellBlocked = this.grid[y][newX].blocked
 							if (!cellBlocked) {
-								value.push({
-									y,
-									x: newX
-								})
+								value.push({y, x: newX})
 							} else {
 								blocked = true
 							}
@@ -357,28 +368,6 @@ class Game extends Cell {
 		}
 	}
 
-	//generate game maps
-	createMaps() {
-		const maps = document.getElementById('map')
-		maps.classList.add('container', 'd-flex', 'flex-column', 'justify-content-left')
-		for (let y = 0; y < this.grid.length; y++) {
-			const row = document.createElement('div')
-			row.classList.add('row')
-			for (let x = 0; x < this.grid[y].length; x++) {
-				const column = document.createElement('div')
-
-				//add data attributes to set the y and x value of the cell
-				column.setAttribute('data-pos-y', y)
-				column.setAttribute('data-pos-x', x)
-
-				column.classList.add('col', 'p-3', 'border')
-				column.id = 'col-' + y + x
-				column.textContent = 'col-' + y + x
-				row.appendChild(column)
-			}
-			maps.appendChild(row)
-		}
-	}
 
 	//player do attack action condition and process
 	attack() {
