@@ -15,12 +15,12 @@
  background-color: #2f2712;
 }
 
-.grid {
+/* .grid { 
   width: 610px;
   height: 60px;
   border: 1px solid grey;
   border:2px solid black;
-}
+} */
 
 .player1{
   background-image: url("../img/player1.png");
@@ -59,3 +59,7 @@
   box-shadow: 0 0 10px #000;
   cursor: pointer;
 }  
+
+#iconInfoModal img{
+  width: 50px;
+}
