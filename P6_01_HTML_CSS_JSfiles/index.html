@@ -148,19 +148,37 @@
                         <div class="row">
                             <div class="col-4">
                                 <div class="list-group" id="list-tab" role="tablist">
-                                    <a class="list-group-item list-group-item-action active" id="list-player-list" data-toggle="list"
+                                    <a class="list-group-item list-group-item-action active" id="list-mapcell-list" data-toggle="list" href="#list-mapcell"
+                                        role="tab" aria-controls="mapcell">Map Cell</a>
+                                    <a class="list-group-item list-group-item-action" id="list-player-list" data-toggle="list"
                                         href="#list-player" role="tab" aria-controls="player">PLayer</a>
                                     <a class="list-group-item list-group-item-action" id="list-weapon-list" data-toggle="list"
                                         href="#list-weapon" role="tab" aria-controls="weapon">Weapon</a>
                                     <a class="list-group-item list-group-item-action" id="list-block-list" data-toggle="list"
                                         href="#list-block" role="tab" aria-controls="block">Block</a>
-                                    <a class="list-group-item list-group-item-action" id="list-mapcell-list" data-toggle="list"
-                                        href="#list-mapcell" role="tab" aria-controls="mapcell">Map Cell</a>
                                 </div>
                             </div>
                             <div class="col-8">
                                 <div class="tab-content" id="nav-tabContent">
-                                    <div class="tab-pane fade show active" id="list-player" role="tabpanel" aria-labelledby="list-player-list">
+                                    <div class="tab-pane show active" id="list-mapcell" role="tabpanel" aria-labelledby="list-mapcell-list">
+                                        <ul class="list-unstyled">
+                                            <li class="media">
+                                                <div class="p-3 mr-3 range2" alt="Range Movement"></div>
+                                                <div class="media-body">
+                                                    <h6 class="mt-0 mb-1">Player Movement Path</h6>
+                                                    Clickable cell 1 to 3 cell vertically and horizontally to the player in turn
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <div class="p-3 mr-3 container" style="width:auto; height: auto" alt="Maps Cell"></div>
+                                                <div class="media-body">
+                                                    <h6 class="mt-0 mb-1">Empty Cell</h6>
+                                                    Not yet Clickable till player position adjacent up to 3 cell vertically and horizontally with the cell
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="tab-pane fade" id="list-player" role="tabpanel" aria-labelledby="list-player-list">
                                             <ul class="list-unstyled">
                                                 <li class="media">
                                                     <img src="img/player1.png" class="mr-3"  alt="..." >
@@ -224,24 +242,6 @@
                                                 <div class="media-body">
                                                     <h6 class="mt-0 mb-1">Brick</h6>
                                                     unavailable movement path
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="tab-pane fade" id="list-mapcell" role="tabpanel" aria-labelledby="list-mapcell-list">
-                                        <ul class="list-unstyled">
-                                            <li class="media">
-                                                <div class="p-3 mr-3 range2" alt="Range Movement"></div>
-                                                <div class="media-body">
-                                                    <h6 class="mt-0 mb-1">Player Movement Path</h6>
-                                                    Clickable
-                                                </div>
-                                            </li>
-                                            <li class="media">
-                                                <div class="p-3 mr-3 container" style="width:auto; height: auto" alt="Maps Cell"></div>
-                                                <div class="media-body">
-                                                    <h6 class="mt-0 mb-1">Empty Cell</h6>
-                                                    Not yet Clickable
                                                 </div>
                                             </li>
                                         </ul>
