@@ -31,45 +31,55 @@
                         </div>
                     </div>
                     <div class="col py-2 informations">
-                        <div class="card text-center mb-2" id="player1InfoCard" style="width: 18rem;">
-                            <h5 class="card-title"> Player 1</h5>
-                            <div>
-                                <img class="card-img-top mx-auto"  src="img/player1.png" style="width:50px;" alt="player1">
-                                <img class="card-img-top mx-auto" id="player1WeaponImage" src="img/default.png" style="width:50px;" alt="player1">
+                        <div class="card text-center px-3 py-3" style="width: 20rem;">
+                            <h4>Game Informations</h4>
+                            <div class="card text-center mb-2" id="player1InfoCard" style="width: 18rem;">
+                                <h5 class="card-title"> Player 1</h5>
+                                <div>
+                                    <img class="card-img-top mx-auto"  src="img/player1.png" style="width:50px;" alt="player1">
+                                    <img class="card-img-top mx-auto" id="player1WeaponImage" src="img/default.png" style="width:50px;" alt="player1">
+                                </div>
+                                <h5 class="card-subtitle pt-2"> Mario </h5>
+                                <div class="row mx-auto">
+                                    <p>Health: </p>
+                                    <p class="px-2" id="player1Health"> 100  </p>
+                                    <p>Damage: </p>
+                                    <p class="px-2 " id="player1Damage">10</p>
+                                </div>
                             </div>
-                            <h5 class="card-subtitle pt-2"> Mario </h5>
-                            <div class="row mx-auto">
-                                <p>Health: </p>
-                                <p class="px-2" id="player1Health"> 100  </p>
-                                <p>Damage: </p>
-                                <p class="px-2 " id="player1Damage">10</p>
+                            <div class="card text-center mb-2" id="player2InfoCard" style="width: 18rem;">
+                                <h5 class="card-title"> Player 2</h5>
+                                <div>
+                                    <img class="card-img-top mx-auto" src="img/player2.png" style="width:50px;" alt="player2">
+                                    <img class="card-img-top mx-auto " id="player2WeaponImage" src="img/default.png" style="width:50px;" alt="player2">
+                                </div>
+                                <h5 class="card-subtitle pt-2"> Luigi </h5>
+                                <div class="row mx-auto ">
+                                    <p>Health: </p>
+                                    <p class="px-2 " id="player2Health"> 100 </p>
+                                    <p>Damage: </p>
+                                    <p class="px-2 " id="player2Damage">10</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="card text-center mb-2" id="player2InfoCard" style="width: 18rem;">
-                            <h5 class="card-title"> Player 2</h5>
-                            <div>
-                                <img class="card-img-top mx-auto" src="img/player2.png" style="width:50px;" alt="player2">
-                                <img class="card-img-top mx-auto " id="player2WeaponImage" src="img/default.png" style="width:50px;" alt="player2">
+                            <div class="card text-center mb-2" style="width: 18rem;">
+                                <div class="row mx-auto ">
+                                    <p>Turn :  </p>
+                                    <p class="px-2" id="turnCounter"> 0 </p>
+                                </div>
                             </div>
-                            <h5 class="card-subtitle pt-2"> Luigi </h5>
-                            <div class="row mx-auto ">
-                                <p>Health: </p>
-                                <p class="px-2 " id="player2Health"> 100 </p>
-                                <p>Damage: </p>
-                                <p class="px-2 " id="player2Damage">10</p>
+                            <div class="card text-center mb-2" style="width: 18rem;">
+                                <div class="row mx-auto ">
+                                    <p>Player Turn : </p>
+                                    <p class="px-2" id="activePlayerName"> Mario </p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="card text-center mb-2" style="width: 18rem;">
-                            <div class="row mx-auto ">
-                                <p>Turn :  </p>
-                                <p class="px-2" id="turnCounter"> 0 </p>
-                            </div>
-                        </div>
-                        <div class="card text-center mb-2" style="width: 18rem;">
-                            <div class="row mx-auto ">
-                                <p>Player Turn : </p>
-                                <p class="px-2" id="activePlayerName"> Mario </p>
-                            </div>
+                            <button data-toggle="modal" data-target="#iconInfoModal">
+                            <h5 id="iconInfo">
+                                <span class="fas fa-exclamation-triangle"></span> 
+                                Icon Informations
+                                <!-- <span class="far fa-grin-alt"></span> -->
+                            </h5>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -103,6 +113,130 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" id="resetButton">Play again!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Modal - Optional -->
+            <div class="modal fade" id="iconInfoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Game Icon Information</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="list-group" id="list-tab" role="tablist">
+                                    <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list"
+                                        href="#list-home" role="tab" aria-controls="home">PLayer</a>
+                                    <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list"
+                                        href="#list-profile" role="tab" aria-controls="profile">Weapon</a>
+                                    <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list"
+                                        href="#list-messages" role="tab" aria-controls="messages">Block</a>
+                                    <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list"
+                                        href="#list-settings" role="tab" aria-controls="settings">Map Cell</a>
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                <div class="tab-content" id="nav-tabContent">
+                                    <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                                            <ul class="list-unstyled">
+                                                <li class="media">
+                                                    <img src="img/player1.png" class="mr-3"  alt="..." >
+                                                    <div class="media-body">
+                                                        <h6 class="mt-0 mb-1">Mario </h6>
+                                                        as Player 1
+                                                    </div>
+                                                </li>
+                                                <li class="media my-4">
+                                                    <img src="img/player2.png" class="mr-3" alt="...">
+                                                    <div class="media-body">
+                                                        <h6 class="mt-0 mb-1">Luigi </h6>
+                                                        as Player 2
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                    </div>
+                                    <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list ">
+                                        <ul class="list-unstyled">
+                                            <li class="media">
+                                                <img src="img/default.png" class="mr-3" alt="defaultWeapon">
+                                                <div class="media-body">
+                                                    <h6 class="mt-0 mb-1">Hand</h6>
+                                                    damage: 10
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <img src="img/mushroom1.png" class="mr-3" alt="Weapon1"   >
+                                                <div class="media-body">
+                                                    <h6 class="mt-0 mb-1">Mushroom 1</h6>
+                                                    damage: 50
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <img src="img/mushroom2.png" class="mr-3" alt="Weapon2">
+                                                <div class="media-body">
+                                                    <h6 class="mt-0 mb-1">Mushroom 2</h6>
+                                                    damage: 40
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <img src="img/mushroom3.png" class="mr-3" alt="Weapon3">
+                                                <div class="media-body">
+                                                    <h6 class="mt-0 mb-1">Mushroom 3</h6>
+                                                    damage: 30
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <img src="img/mushroom4.png" class="mr-3" alt="Weapon4">
+                                                <div class="media-body">
+                                                    <h6 class="mt-0 mb-1">Mushroom 4</h6>
+                                                    damage: 15
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
+                                        <ul class="list-unstyled">
+                                            <li class="media">
+                                                <img src="img/brick.png" class="mr-3" alt="...">
+                                                <div class="media-body">
+                                                    <h6 class="mt-0 mb-1">Brick</h6>
+                                                    unavailable movement path
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
+                                        <ul class="list-unstyled">
+                                            <li class="media">
+                                                <div class="p-3 mr-3 range2" alt="Range Movement"></div>
+                                                <div class="media-body">
+                                                    <h6 class="mt-0 mb-1">Player Movement Path</h6>
+                                                    Clickable
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <div class="container p-3 mr-3" style="width:auto; height: auto" alt="Maps Cell"></div>
+                                                <div class="media-body">
+                                                    <h6 class="mt-0 mb-1">Cell</h6>
+                                                    Not yet Clickable
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="modal-footer">
+                            <p>@sintaanjelina 2020 All rigths reserved</p>
                         </div>
                     </div>
                 </div>
