@@ -77,9 +77,9 @@
                             <h5 id="iconInfo">
                                 <span class="fas fa-exclamation-triangle"></span> 
                                 Icon Informations
-                                <!-- <span class="far fa-grin-alt"></span> -->
                             </h5>
                             </button>
+                            <h6 class="text-right mt-4 ">@sintaanjelina All Rights reserved</h6>
                         </div>
                     </div>
                 </div>
@@ -133,19 +133,19 @@
                         <div class="row">
                             <div class="col-4">
                                 <div class="list-group" id="list-tab" role="tablist">
-                                    <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list"
-                                        href="#list-home" role="tab" aria-controls="home">PLayer</a>
-                                    <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list"
-                                        href="#list-profile" role="tab" aria-controls="profile">Weapon</a>
-                                    <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list"
-                                        href="#list-messages" role="tab" aria-controls="messages">Block</a>
-                                    <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list"
-                                        href="#list-settings" role="tab" aria-controls="settings">Map Cell</a>
+                                    <a class="list-group-item list-group-item-action active" id="list-player-list" data-toggle="list"
+                                        href="#list-player" role="tab" aria-controls="player">PLayer</a>
+                                    <a class="list-group-item list-group-item-action" id="list-weapon-list" data-toggle="list"
+                                        href="#list-weapon" role="tab" aria-controls="weapon">Weapon</a>
+                                    <a class="list-group-item list-group-item-action" id="list-block-list" data-toggle="list"
+                                        href="#list-block" role="tab" aria-controls="block">Block</a>
+                                    <a class="list-group-item list-group-item-action" id="list-mapcell-list" data-toggle="list"
+                                        href="#list-mapcell" role="tab" aria-controls="mapcell">Map Cell</a>
                                 </div>
                             </div>
                             <div class="col-8">
                                 <div class="tab-content" id="nav-tabContent">
-                                    <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                                    <div class="tab-pane fade show active" id="list-player" role="tabpanel" aria-labelledby="list-player-list">
                                             <ul class="list-unstyled">
                                                 <li class="media">
                                                     <img src="img/player1.png" class="mr-3"  alt="..." >
@@ -163,7 +163,7 @@
                                                 </li>
                                             </ul>
                                     </div>
-                                    <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list ">
+                                    <div class="tab-pane fade" id="list-weapon" role="tabpanel" aria-labelledby="list-weapon-list ">
                                         <ul class="list-unstyled">
                                             <li class="media">
                                                 <img src="img/default.png" class="mr-3" alt="defaultWeapon">
@@ -202,10 +202,10 @@
                                             </li>
                                         </ul>
                                     </div>
-                                    <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
+                                    <div class="tab-pane fade" id="list-block" role="tabpanel" aria-labelledby="list-block-list">
                                         <ul class="list-unstyled">
                                             <li class="media">
-                                                <img src="img/brick.png" class="mr-3" alt="...">
+                                                <img src="img/brick.png" class="mr-3 " alt="block">
                                                 <div class="media-body">
                                                     <h6 class="mt-0 mb-1">Brick</h6>
                                                     unavailable movement path
@@ -213,7 +213,7 @@
                                             </li>
                                         </ul>
                                     </div>
-                                    <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
+                                    <div class="tab-pane fade" id="list-mapcell" role="tabpanel" aria-labelledby="list-mapcell-list">
                                         <ul class="list-unstyled">
                                             <li class="media">
                                                 <div class="p-3 mr-3 range2" alt="Range Movement"></div>
@@ -223,9 +223,9 @@
                                                 </div>
                                             </li>
                                             <li class="media">
-                                                <div class="container p-3 mr-3" style="width:auto; height: auto" alt="Maps Cell"></div>
+                                                <div class="p-3 mr-3 container" style="width:auto; height: auto" alt="Maps Cell"></div>
                                                 <div class="media-body">
-                                                    <h6 class="mt-0 mb-1">Cell</h6>
+                                                    <h6 class="mt-0 mb-1">Empty Cell</h6>
                                                     Not yet Clickable
                                                 </div>
                                             </li>
