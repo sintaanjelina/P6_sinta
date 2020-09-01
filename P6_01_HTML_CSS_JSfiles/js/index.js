@@ -40,8 +40,8 @@ class Weapon {
 /******************** Block object blueprint ****************/
 class Block {
 	//initialize block properties
-	constructor(name) {
-		this.id = 'block'
+	constructor(id,name) {
+		this.id = id
 		this.name = name
 		this.type = 'block'
 		this.position = {
@@ -447,7 +447,7 @@ game.createMaps()
 //generate blocks
 let numberOfBlocks = 20;
 while (numberOfBlocks != 0) {
-    if (game.createItem(new Block('block'))==true) {
+    if (game.createItem(new Block('brick','brick block'))==true) {
         numberOfBlocks--
     }
 }
