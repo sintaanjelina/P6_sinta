@@ -471,7 +471,7 @@ game.createItem(weapon2)
 game.createItem(weapon3)
 game.createItem(weapon4)
 
-
+$('#openingGameModal').modal("show")
 // Player 1 start game
 game.startGame(player1)
 
@@ -486,6 +486,7 @@ $('#defendButton').on('click', function () {
 })
 $('#resetButton').on('click', function () {
 	location.reload()
+
 })
 
 
