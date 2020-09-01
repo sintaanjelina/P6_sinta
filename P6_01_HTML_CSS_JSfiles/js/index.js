@@ -214,10 +214,10 @@ class Game extends Cell {
 		const path = this.pathFinder(playerObject.position, playerObject.rangeLimit)
 		this.pathGenerator(path)
 
-		this.battleDecisionModal()
+		// this.battleDecisionModal()
 	}
 
-	//get array of available path in up down left right direction for player movement range in its positiom
+	//get array of available path in up down left right direction for player movement range in its position
 	pathFinder(position, length) {
 		const { x, y } = position
 		const path = {
@@ -294,6 +294,16 @@ class Game extends Cell {
 		})
 	}
 
+	// remove previous path movement from game map
+	pathRemover(oldPath) {
+		Object.values(oldPath).forEach((positions) => {
+			for (let i = 0; i < positions.length; i++) {
+				removeClassName(positions[i], 'range2')
+			}
+		})
+	}
+
+
 	// get opponent in adjacent position to player
 	opponentFinder(playerPosition, fightingRange = 1) {
         const { x, y } = playerPosition
@@ -360,16 +370,6 @@ class Game extends Cell {
 		return false
 	}
 
-	// remove previous path movement from game map
-	pathRemover(oldPath) {
-		Object.values(oldPath).forEach((positions) => {
-			for (let i = 0; i < positions.length; i++) {
-				removeClassName(positions[i], 'range2')
-			}
-		})
-	}
-
-
 	//player do attack action condition and process
 	attack() {
 		const playerInBattleMode = this.playerOnTurn
@@ -435,6 +435,7 @@ class Game extends Cell {
 		}
 	}
 }
+
 
 //inisialise game with maps size 10x10
 const game = new Game(10,10)
@@ -614,4 +615,3 @@ function removeClassName(coordinates, objClass) {
 		return true;
 	}
 }
-console.table(game.grid)
