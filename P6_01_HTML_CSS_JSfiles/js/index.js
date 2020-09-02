@@ -492,85 +492,84 @@ cell.on("click", function () {
 		return
 	}
 
-	//player move to range cell click
-		//remove old path range
-		const oldPath = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
-		game.pathRemover(oldPath)
+	//remove old path range
+	const oldPath = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
+	game.pathRemover(oldPath)
 
-		//remove player in previous position
+	//remove player in previous position
+	game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
+
+	//get x and y of player newposition
+	const newPosition = {
+		y: parseInt(this.getAttribute('data-pos-y')),
+		x: parseInt(this.getAttribute('data-pos-x'))
+	}
+
+	//player on turn origin place
+	const playerOnTurnOrigin = game.playerOnTurn
+	
+	//drop player previous weapon if exist into cell and remove player in that cell
+	if (game.playerOnTurn.previousWeapon.id !== undefined) {
+		game.grid[game.playerOnTurn.position.y][game.playerOnTurn.position.x] = new Cell()
 		game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
+		game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn.previousWeapon)
+		game.playerOnTurn.previousWeapon = {}
+	}
 
-		//get x and y of player newposition
-		const newPosition = {
-			y: parseInt(this.getAttribute('data-pos-y')),
-			x: parseInt(this.getAttribute('data-pos-x'))
+	//get weapon in new position
+	const weaponOnPath = game.grid[newPosition.y][newPosition.x].findItemByType('weapon')
+
+	//change weapon on path to player weapon
+	if (weaponOnPath) {
+		//if player weapon is default no previous weapon added only remove weapon on path and add player to newPosition
+		if (game.playerOnTurn.weapon.id == 'default') {
+			game.removeItem(weaponOnPath.position.y, weaponOnPath.position.x, weaponOnPath)
+			removeClassName(newPosition.y, newPosition.x, weaponOnPath)
+
+			game.playerOnTurn.weapon = weaponOnPath
+
+			game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
+
 		}
+		//change player weapon to previous weapon and weapon on path player weapon and push temp weapon to cell 
+		else {
+			let tempWeapon = game.playerOnTurn.weapon
+			game.playerOnTurn.previousWeapon = tempWeapon
+			tempWeapon.position = newPosition
 
-        //player on turn origin place
-		const playerOnTurnOrigin = game.playerOnTurn
-		
-		//drop player previous weapon if exist into cell and remove player in that cell
-		if (game.playerOnTurn.previousWeapon.id !== undefined) {
-			game.grid[game.playerOnTurn.position.y][game.playerOnTurn.position.x] = new Cell()
-			game.removeItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
-			game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn.previousWeapon)
-			game.playerOnTurn.previousWeapon = {}
+			game.playerOnTurn.weapon = weaponOnPath
+
+			game.removeItem(newPosition.y, newPosition.x, weaponOnPath)
+
+			game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
+
+			game.grid[newPosition.y][newPosition.x].item.push(tempWeapon)
 		}
+	}
 
-		//get weapon in new position
-		const weaponOnPath = game.grid[newPosition.y][newPosition.x].findItemByType('weapon')
+	//change player position to new position 
+	game.playerOnTurn.position = newPosition
 
-		//change weapon on path to player weapon
-        if (weaponOnPath) {
-            //if player weapon is default no previous weapon added only remove weapon on path and add player to newPosition
-			if (game.playerOnTurn.weapon.id == 'default') {
-				game.removeItem(weaponOnPath.position.y, weaponOnPath.position.x, weaponOnPath)
-				removeClassName(newPosition.y, newPosition.x, weaponOnPath)
+	//change player weapon position to player position 
+	game.playerOnTurn.weapon.position = game.playerOnTurn.position
+	
+	//add player to game maps item in the new position
+	game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
 
-				game.playerOnTurn.weapon = weaponOnPath
+	//update the information of player damage and weapon image
+	$(`#${game.playerOnTurn.id}Damage`).text(game.playerOnTurn.weapon.damage)
+	$(`#${game.playerOnTurn.id}WeaponImage`).attr('src', `img/${game.playerOnTurn.weapon.id}.png`)
 
-				game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
+	//change player turn to player waiting / opponent        
+	if (game.playerWaiting == 'player2') {
+		game.startGame(player2)
+	} else {
+		game.startGame(player1)
+	}
 
-            }
-            //change player weapon to previous weapon and weapon on path player weapon and push temp weapon to cell 
-            else {
-				let tempWeapon = game.playerOnTurn.weapon
-				game.playerOnTurn.previousWeapon = tempWeapon
-				tempWeapon.position = newPosition
+	//check if player is in adjacent position with opponent to show battle decision modal
+	game.battleDecisionModal()
 
-				game.playerOnTurn.weapon = weaponOnPath
-
-				game.removeItem(newPosition.y, newPosition.x, weaponOnPath)
-
-				game.addItem(newPosition.y, newPosition.x, playerOnTurnOrigin)
-
-				game.grid[newPosition.y][newPosition.x].item.push(tempWeapon)
-			}
-		}
-
-        //change player position to new position 
-		game.playerOnTurn.position = newPosition
-
-        //change player weapon position to player position 
-		game.playerOnTurn.weapon.position = game.playerOnTurn.position
-        
-        //add player to game maps item in the new position
-        game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn)
-
-        //update the information of player damage and weapon image
-		$(`#${game.playerOnTurn.id}Damage`).text(game.playerOnTurn.weapon.damage)
-		$(`#${game.playerOnTurn.id}WeaponImage`).attr('src', `img/${game.playerOnTurn.weapon.id}.png`)
-
-        //change player turn to player waiting / opponent        
-		if (game.playerWaiting == 'player2') {
-			game.startGame(player2)
-		} else {
-			game.startGame(player1)
-		}
-
-        //check if player is in adjacent position with opponent to show battle decision modal
-		game.battleDecisionModal()
-    
     //turn counter plus 1
 	game.turn += 1
 	$('#turnCounter').text(game.turn)
