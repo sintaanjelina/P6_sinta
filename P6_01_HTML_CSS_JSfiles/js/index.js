@@ -138,7 +138,7 @@ class Game extends Cell {
             }
 
             this.grid[y][x].item.push(item)
-            addClassName({ y: y, x: x }, item.id)
+			addClassName({ y: y, x: x }, item.id)
 
             return true
         }
@@ -374,6 +374,8 @@ class Game extends Cell {
 	attack() {
 		const playerInBattleMode = this.playerOnTurn
 		const opponentInBattleMode = this.opponentFinder(this.playerOnTurn.position)
+		this.turn += 1
+		$('#turnCounter').text(this.turn)
 
 		let damageReceived = playerInBattleMode.weapon.damage
 
@@ -414,6 +416,8 @@ class Game extends Cell {
 	defend() {
 		const playerInBattleMode = this.playerOnTurn
 		const opponentInBattleMode = this.opponentFinder(this.playerOnTurn.position)
+		this.turn += 1
+		$('#turnCounter').text(this.turn)
 
 		// player defend status is true
 		playerInBattleMode.defend = true
@@ -444,6 +448,7 @@ const game = new Game(10,10)
 game.generateGrid()
 game.createMaps()
 
+
 //generate blocks
 let numberOfBlocks = 20;
 while (numberOfBlocks != 0) {
@@ -471,42 +476,23 @@ game.createItem(weapon2)
 game.createItem(weapon3)
 game.createItem(weapon4)
 
-$('#openingGameModal').modal("show")
+
+//$('#openingGameModal').modal("show")
+
 // Player 1 start game
 game.startGame(player1)
-
-/******************** Battle Mode Modal Attack Defend Reset Action Event Listener ****************/
-$('#attackButton').on('click', function () {
-	game.attack()
-	game.battleDecisionModal()
-})
-$('#defendButton').on('click', function () {
-	game.defend()
-	game.battleDecisionModal()
-})
-$('#resetButton').on('click', function () {
-	location.reload()
-
-})
 
 
 var cell = $("div#map > div>div")
 /****************************************** Game Cycle ******************************************/
 cell.on("click", function () {
 
-	//clickable cell is the range path cell and playerWaiting or opponent player
-	if (!$(this).hasClass('range2') && !$(this).hasClass(game.playerWaiting)) {
+	//clickable cell is the range path cell
+	if (!$(this).hasClass('range2')) {
 		return
 	}
 
-	//if player click on opponent generate battle decision modal
-	if ($(this).hasClass(game.playerWaiting)) {
-		game.battleDecisionModal()
-	}
-
-	//else player move to range cell click
-	else {
-
+	//player move to range cell click
 		//remove old path range
 		const oldPath = game.pathFinder(game.playerOnTurn.position, game.playerOnTurn.rangeLimit)
 		game.pathRemover(oldPath)
@@ -523,9 +509,6 @@ cell.on("click", function () {
         //player on turn origin place
 		const playerOnTurnOrigin = game.playerOnTurn
 		
-		//get weapon in new position
-		const weaponOnPath = game.grid[newPosition.y][newPosition.x].findItemByType('weapon')
-
 		//drop player previous weapon if exist into cell and remove player in that cell
 		if (game.playerOnTurn.previousWeapon.id !== undefined) {
 			game.grid[game.playerOnTurn.position.y][game.playerOnTurn.position.x] = new Cell()
@@ -533,6 +516,9 @@ cell.on("click", function () {
 			game.addItem(game.playerOnTurn.position.y, game.playerOnTurn.position.x, game.playerOnTurn.previousWeapon)
 			game.playerOnTurn.previousWeapon = {}
 		}
+
+		//get weapon in new position
+		const weaponOnPath = game.grid[newPosition.y][newPosition.x].findItemByType('weapon')
 
 		//change weapon on path to player weapon
         if (weaponOnPath) {
@@ -584,11 +570,24 @@ cell.on("click", function () {
 
         //check if player is in adjacent position with opponent to show battle decision modal
 		game.battleDecisionModal()
-    }
     
     //turn counter plus 1
 	game.turn += 1
 	$('#turnCounter').text(game.turn)
+
+})
+
+/******************** Battle Mode Modal Attack Defend Reset Action Event Listener ****************/
+$('#attackButton').on('click', function () {
+	game.attack()
+	game.battleDecisionModal()
+})
+$('#defendButton').on('click', function () {
+	game.defend()
+	game.battleDecisionModal()
+})
+$('#resetButton').on('click', function () {
+	location.reload()
 
 })
 
