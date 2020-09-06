@@ -26,4 +26,4 @@ A player will win when opponent health is zero. Game end and winning message wil
 
 ##### Game Board Design Key :
 - Flexbox column direction for row maps and column generated inside every row with javascript
-- Item Class name in css equals object id in js to place Object Item in randomize position cell
+- Item Class name in css equals object id in js to place Object Item in randomize position cell by adding and removing class name
