@@ -152,21 +152,25 @@ class Game extends Cell {
         if (this.grid[y][x].item && this.grid[y][x].item.length) {
             if (this.grid[y][x].item[0].id == item.id) {
                 this.grid[y][x].item.splice(0, 1)
-                removeClassName({ y: y, x: x }, item.id)
+				removeClassName({ y: y, x: x }, item.id)
+				return true
             }
-        }
+		}
+		return false
     }
 
     //create item by getting random number for position and add item in the position with condition
     createItem(itemObject, amount=1) {
         let numavailableCell = 0;
-        for (let y = 0; y < this.grid.length; y++) {
+		
+		for (let y = 0; y < this.grid.length; y++) {
             for (let x = 0; x < this.grid[y].length; x++) {
                 if (this.grid[y][x].item.length <= 0) {
                     numavailableCell++;
                 }
             }
-        }
+		}
+		
         if (amount <= numavailableCell) {
             while (amount != 0) {
                 var randIndex = this.getRandomCell()
@@ -194,29 +198,6 @@ class Game extends Cell {
         }
     }
 
-
-	//condition when player given turn
-	startGame(playerObject) {
-		$("div#map > div>div").removeClass('range2');
-
-		if (playerObject.id === 'player1') {
-			this.playerOnTurn = playerObject
-			this.playerWaiting = 'player2'
-		} else {
-			this.playerOnTurn = playerObject
-			this.playerWaiting = 'player1'
-		}
-
-		$(`#${this.playerOnTurn.id}InfoCard`).addClass('text-white bg-dark')
-		$(`#activePlayerName`).text(`${this.playerOnTurn.name}`)
-		$(`#${this.playerWaiting}InfoCard`).removeClass('text-white bg-dark')
-
-		const path = this.pathFinder(playerObject.position, playerObject.rangeLimit)
-		this.pathGenerator(path)
-
-		// this.battleDecisionModal()
-	}
-
 	//get array of available path in up down left right direction for player movement range in its position
 	pathFinder(position, length) {
 		const { x, y } = position
@@ -238,7 +219,7 @@ class Game extends Cell {
 						if (newY >= 0 && newY < this.grid.length && !blocked) {
 							const cellBlocked = this.grid[newY][x].blocked
 							if (!cellBlocked) {
-								value.push({y: newY, x: x})
+								value.push({ y: newY, x: x })
 							} else {
 								blocked = true
 							}
@@ -249,7 +230,7 @@ class Game extends Cell {
 						if (newY >= 0 && newY < this.grid.length && !blocked) {
 							const cellBlocked = this.grid[newY][x].blocked
 							if (!cellBlocked) {
-								value.push({y: newY, x})
+								value.push({ y: newY, x })
 							} else {
 								blocked = true
 							}
@@ -261,7 +242,7 @@ class Game extends Cell {
 						if (newX >= 0 && newX < this.grid[y].length && !blocked) {
 							const cellBlocked = this.grid[y][newX].blocked
 							if (!cellBlocked) {
-								value.push({y, x: newX})
+								value.push({ y, x: newX })
 							} else {
 								blocked = true
 							}
@@ -273,7 +254,7 @@ class Game extends Cell {
 						if (newX >= 0 && newX < this.grid[y].length && !blocked) {
 							const cellBlocked = this.grid[y][newX].blocked
 							if (!cellBlocked) {
-								value.push({y, x: newX})
+								value.push({ y, x: newX })
 							} else {
 								blocked = true
 							}
@@ -303,7 +284,29 @@ class Game extends Cell {
 		})
 	}
 
+	//condition when player given turn
+	startGame(playerObject) {
+		$("div#map > div>div").removeClass('range2');
 
+		if (playerObject.id === 'player1') {
+			this.playerOnTurn = playerObject
+			this.playerWaiting = 'player2'
+		} else {
+			this.playerOnTurn = playerObject
+			this.playerWaiting = 'player1'
+		}
+
+		$(`#${this.playerOnTurn.id}InfoCard`).addClass('text-white bg-dark')
+		$(`#activePlayerName`).text(`${this.playerOnTurn.name}`)
+		$(`#${this.playerWaiting}InfoCard`).removeClass('text-white bg-dark')
+
+		const path = this.pathFinder(playerObject.position, playerObject.rangeLimit)
+		this.pathGenerator(path)
+
+		// this.battleDecisionModal()
+	}
+
+	
 	// get opponent in adjacent position to player
 	opponentFinder(playerPosition, fightingRange = 1) {
         const { x, y } = playerPosition
@@ -313,7 +316,7 @@ class Game extends Cell {
 			left: [],
 			right: []
 		}
-
+		
 		for (var direction of Object.keys(opponent)) {
 			let newY = y
 			let newX = x
@@ -433,7 +436,7 @@ class Game extends Cell {
 	battleDecisionModal() {
 		const opponentInFightingRange = this.opponentFinder(this.playerOnTurn.position)
 		if (opponentInFightingRange) {
-			$('#battleDecisionModal .modal-body').text(this.playerOnTurn.name + ' Turn! Select your action!' + this.playerOnTurn.position.y + this.playerOnTurn.position.x + 'found' + opponentInFightingRange.position.y + opponentInFightingRange.position.x + opponentInFightingRange.name)
+			$('#battleDecisionModal .modal-body').text(this.playerOnTurn.name + ' Turn! Select your action!' + this.playerOnTurn.position.y + this.playerOnTurn.position.x + ' found ' + opponentInFightingRange.position.y + opponentInFightingRange.position.x + opponentInFightingRange.name)
 
 			$('#battleDecisionModal').addClass('show d-block')
 		}
@@ -448,7 +451,6 @@ const game = new Game(10,10)
 game.generateGrid()
 game.createMaps()
 
-
 //generate blocks
 let numberOfBlocks = 20;
 while (numberOfBlocks != 0) {
@@ -462,7 +464,7 @@ const player1 = new Player('player1', 'Mario')
 const player2 = new Player('player2', 'Luigi')
 
 
-//inisialize defaultWeapon, weapon1, weapon2, weapon3, and weapon 4
+//inisialize  weapon1, weapon2, weapon3, and weapon 4
 const weapon1 = new Weapon('mushroom1', 'Mushroom 1', 50)
 const weapon2 = new Weapon('mushroom2', 'Mushroom 2', 40)
 const weapon3 = new Weapon('mushroom3', 'Mushroom 3', 30)
@@ -477,7 +479,7 @@ game.createItem(weapon3)
 game.createItem(weapon4)
 
 
-//$('#openingGameModal').modal("show")
+$('#openingGameModal').modal("show")
 
 // Player 1 start game
 game.startGame(player1)
@@ -576,6 +578,7 @@ cell.on("click", function () {
 
 })
 
+
 /******************** Battle Mode Modal Attack Defend Reset Action Event Listener ****************/
 $('#attackButton').on('click', function () {
 	game.attack()
@@ -614,3 +617,4 @@ function removeClassName(coordinates, objClass) {
 		return true;
 	}
 }
+
