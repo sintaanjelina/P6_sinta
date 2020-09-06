@@ -4,9 +4,9 @@
 
 # Project Summary 
 ###### Game item in the board defined and worked as follows:
-- at least 4 weapons
-- 2 players
-- block or obstacles (no amount required listed so it is self-defined in code)
+- at least 4 weapons in the game
+- 2 players plays the game
+- block or obstacles (no amount required listed so it is self-defined in code) placed in the game cannot be passed
 - All items have visual image and name and other specific attributes like damage or health. 
 - All items are Randomly generated into the game map/ board cell and not being place together in the same cellbox.
 - there are cell with no item placed called empty cell
