@@ -2,6 +2,7 @@
 ### Openclassroom Project 6 
 #### Build Turn-Based board game in javascript for "Open Classroom Front-End Developer Path offered By DevC Medan and powered by OpenClassroom Workplace Facebook"
 
+## Game Site : https://sintaanjelina.github.io/P6_sinta
 # Project Summary 
 ##### Game item in the board defined and worked as follows:
 - at least 4 weapons in the game
