@@ -436,7 +436,7 @@ class Game extends Cell {
 	battleDecisionModal() {
 		const opponentInFightingRange = this.opponentFinder(this.playerOnTurn.position)
 		if (opponentInFightingRange) {
-			$('#battleDecisionModal .modal-body').text(this.playerOnTurn.name + ' Turn! Select your action!' + this.playerOnTurn.position.y + this.playerOnTurn.position.x + ' found ' + opponentInFightingRange.position.y + opponentInFightingRange.position.x + opponentInFightingRange.name)
+			$('#battleDecisionModal .modal-body').text(this.playerOnTurn.name + ' Turn! Select your action! Attack or Defend towards ' + opponentInFightingRange.name)
 
 			$('#battleDecisionModal').addClass('show d-block')
 		}
