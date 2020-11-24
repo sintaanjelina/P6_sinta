@@ -106,10 +106,10 @@ class Game extends Cell {
                 column.setAttribute('data-pos-y', y)
                 column.setAttribute('data-pos-x', x)
 
-                column.classList.add('col', 'p-3', 'border')
+                column.classList.add('col', 'box-size' ,'border')
                 column.id = 'col-' + y + x
-                column.textContent = '      '
-		row.appendChild(column)
+                // column.textContent = 'col-' + y + x
+                row.appendChild(column)
             }
             maps.appendChild(row)
         }
@@ -131,8 +131,8 @@ class Game extends Cell {
 
             if (item.type === 'weapon') {
                 this.grid[y][x].blocked = false
-
-            }
+			}
+			
             if (item.type === 'block' || item.type === 'player') {
                 this.grid[y][x].blocked = true
             }
