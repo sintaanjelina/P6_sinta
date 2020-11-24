@@ -108,8 +108,8 @@ class Game extends Cell {
 
                 column.classList.add('col', 'p-3', 'border')
                 column.id = 'col-' + y + x
-                //column.textContent = 'col-' + y + x
-                row.appendChild(column)
+                column.textContent = '      '
+		row.appendChild(column)
             }
             maps.appendChild(row)
         }
