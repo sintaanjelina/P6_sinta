@@ -1,25 +1,29 @@
-*{
+* {
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
 }
 
-#map{
+#map {
   max-width: 800px;
   min-width: 800px;
-  border:1px solid red;   
+  border: 1px solid red;
   box-sizing: border-box;
 }
 
-.container{
- background-color: #2f2712;
+.box-size {
+  padding: 1.75rem 1.5rem;
 }
 
-.player1{
+.container {
+  background-color: #2f2712;
+}
+
+.player1 {
   background-image: url("../img/player1.png");
 }
 
-.player2{
+.player2 {
   background-image: url("../img/player2.png");
 }
 
@@ -31,7 +35,7 @@
 }
 
 .mushroom1 {
-  background-image: url("../img/mushroom1.png"); 
+  background-image: url("../img/mushroom1.png");
 }
 
 .mushroom2 {
@@ -51,8 +55,8 @@
   background-color: #ffeb00;
   box-shadow: 0 0 10px #000;
   cursor: pointer;
-}  
+}
 
-#iconInfoModal img{
+#iconInfoModal img {
   width: 50px;
 }
